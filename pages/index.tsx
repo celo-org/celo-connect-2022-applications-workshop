@@ -1,9 +1,12 @@
+import { useContractKit } from "@celo-tools/use-contractkit";
+
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
+  const { connect, address } = useContractKit();
   return (
     <main className={styles.main}>
       <h1 className={styles.title}>
@@ -18,12 +21,15 @@ const Home: NextPage = () => {
         workshop
       </h1>
 
-      <p className={styles.description}>
-        Get started by editing{" "}
-        <code className={styles.code}>pages/index.tsx</code>
-      </p>
-
-      <div className={styles.grid}></div>
+      <div className={styles.grid}>
+        {address ? (
+          <div>Connected to {address}</div>
+        ) : (
+          <button className={styles.button} onClick={connect}>
+            Connect wallet
+          </button>
+        )}
+      </div>
     </main>
   );
 };

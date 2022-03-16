@@ -92,6 +92,7 @@
   justify-content: center;
   flex-wrap: wrap;
   max-width: 800px;
+  margin-top: 5rem;
 }
 
 .logo {
@@ -104,4 +105,29 @@
     width: 100%;
     flex-direction: column;
   }
+}
+
+.button {
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-block;
+  line-height: normal;
+  user-select: none;
+  vertical-align: middle;
+  background-color: teal;
+  border: transparent;
+  border-radius: 2px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 100%;
+  padding: 0.5em 1em;
+  text-decoration: none;
+}
+.button:hover,
+.button:focus {
+  background-image: linear-gradient(
+    transparent,
+    rgba(0, 0, 0, 0.05) 40%,
+    rgba(0, 0, 0, 0.1)
+  );
+  color: #fff;
 }
