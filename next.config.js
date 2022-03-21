@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 module.exports = {
   webpack5: true,
   webpack: (config, { isServer }) => {
@@ -11,5 +13,11 @@ module.exports = {
       };
     }
     return config;
+  },
+  env: {
+    AUCTION_CONTRACT_ADDRESS: process.env.AUCTION_CONTRACT_ADDRESS,
+  },
+  images: {
+    domains: ["*"],
   },
 };

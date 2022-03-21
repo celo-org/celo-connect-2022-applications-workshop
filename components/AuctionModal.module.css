@@ -1,0 +1,30 @@
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 3rem;
+}
+.modalBody > * {
+  padding-bottom: 1rem;
+}
+.inputSection {
+  display: flex;
+  flex-direction: column;
+}
+.inputSection input {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.buttonSection {
+  display: flex;
+  align-content: space-between;
+}
+.buttonSection button:first-child {
+  margin-right: 1rem;
+}

@@ -1,91 +1,166 @@
+import styles from "./Home.module.css";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { StableToken } from "@celo/contractkit";
 import BigNumber from "bignumber.js";
+import isURL from "validator/lib/isURL";
 
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import styles from "../styles/Home.module.css";
+import { useCallback, useEffect, useState } from "react";
+import { auctionHouse } from "../utils/auction_house";
+import { Auction } from "../utils/auction";
+import useInterval from "../utils/use-interval";
+import AuctionTable from "../components/AuctionTable";
+import AuctionModal from "../components/AuctionModal";
 
-const DEFAULT_SUMMARY = {
-  name: "",
-  address: "",
-  wallet: "",
-  celo: new BigNumber(0),
-  cusd: new BigNumber(0),
-  ceur: new BigNumber(0),
-};
+const MINUTE = 60;
+
 const Home: NextPage = () => {
-  const { kit, address, connect, walletType } = useContractKit();
-  const [summary, setSummary] = useState(DEFAULT_SUMMARY);
+  const { kit, connect, walletType, performActions } = useContractKit();
+  const [auctions, setAuctions] = useState<Auction[]>([]);
 
-  const fetchSummary = useCallback(async () => {
-    if (!address) return;
+  const fetchAuctions = useCallback(async () => {
+    if (!kit) return;
 
-    const [accounts, goldToken, cUSD, cEUR] = await Promise.all([
-      kit.contracts.getAccounts(),
-      kit.contracts.getGoldToken(),
-      kit.contracts.getStableToken(StableToken.cUSD),
-      kit.contracts.getStableToken(StableToken.cEUR),
-    ]);
+    const allAuctionAdresses = await auctionHouse.methods.allAuctions().call();
+    const allAuctions = allAuctionAdresses.map(
+      (address) => new Auction(kit, address)
+    );
 
-    const [summary, celo, cusd, ceur] = await Promise.all([
-      accounts.getAccountSummary(address).catch((e) => {
-        console.error(e);
-        return DEFAULT_SUMMARY;
-      }),
-      goldToken.balanceOf(address),
-      cUSD.balanceOf(address),
-      cEUR.balanceOf(address),
-    ]);
+    setAuctions(allAuctions);
+  }, [kit]);
 
-    setSummary({
-      ...summary,
-      celo,
-      cusd,
-      ceur,
-    });
-  }, [kit, address]);
+  const createAuction = useCallback(
+    async (imageUrl: string, bidTime = 5) => {
+      if (!isURL(imageUrl)) return;
+
+      await performActions(async (k) => {
+        if (!k.defaultAccount) return;
+
+        const currentBlock = (await k.web3.eth.getBlockNumber()) + 2; // add two block padding
+        const endingBlock = Math.ceil(currentBlock + (bidTime * MINUTE) / 5);
+        const auction = auctionHouse.methods.createAuction(
+          1, // baby bid
+          currentBlock,
+          endingBlock,
+          imageUrl
+        );
+        const args = {
+          from: k.defaultAccount,
+          data: auction.encodeABI(),
+        };
+        const gas = await auction.estimateGas(args);
+
+        setTimeout(() => fetchAuctions(), 5000);
+        return k.sendTransaction({ ...args, gas });
+      });
+    },
+    [performActions, fetchAuctions]
+  );
+
+  const bid = useCallback(
+    async (auctionAddress: string) => {
+      if (!auctionAddress) return;
+      const auction = auctions.find((x) => x.address === auctionAddress);
+      if (!auction) return;
+
+      await performActions(async (k) => {
+        if (!k.defaultAccount) return;
+
+        const bid = auction.contract.methods.placeBid();
+        const currentBid = await auction.contract.methods
+          .highestBindingBid()
+          .call();
+        const increment = new BigNumber(
+          await auction.contract.methods.bidIncrement().call()
+        );
+
+        const args = {
+          from: k.defaultAccount,
+          data: bid.encodeABI(),
+          value: new BigNumber(currentBid).plus(increment).toString(),
+        };
+        const gas = await bid.estimateGas(args);
+
+        return k.sendTransaction({ ...args, gas });
+      });
+    },
+    [performActions, auctions]
+  );
+
+  const withdraw = useCallback(
+    async (auctionAddress: string) => {
+      if (!auctionAddress) return;
+      const auction = auctions.find((x) => x.address === auctionAddress);
+      if (!auction) return;
+
+      await performActions(async (k) => {
+        if (!k.defaultAccount) return;
+
+        const data = await auction.getData();
+        if (!Auction.canBeWithdrawn(k.defaultAccount, data)) return;
+
+        const widthdraw = auction.contract.methods.withdraw();
+
+        const args = {
+          from: k.defaultAccount,
+          data: widthdraw.encodeABI(),
+        };
+        const gas = await widthdraw.estimateGas(args);
+
+        return k.sendTransaction({ ...args, gas });
+      });
+    },
+    [performActions, auctions]
+  );
+
+  const cancel = useCallback(
+    async (auctionAddress: string) => {
+      if (!auctionAddress) return;
+      const auction = auctions.find((x) => x.address === auctionAddress);
+      if (!auction) return;
+
+      await performActions(async (k) => {
+        if (!k.defaultAccount) return;
+
+        const data = await auction.getData();
+        if (!Auction.isOwner(k.defaultAccount, data)) return;
+
+        const cancel = auction.contract.methods.cancelAuction();
+
+        const args = {
+          from: k.defaultAccount,
+          data: cancel.encodeABI(),
+        };
+        const gas = await cancel.estimateGas(args);
+
+        return k.sendTransaction({ ...args, gas });
+      });
+    },
+    [performActions, auctions]
+  );
 
   useEffect(() => {
-    void fetchSummary();
-  }, [fetchSummary]);
-
-  const ConnectedComponent = () => (
-    <div>
-      <div>Account summary</div>
-      <div className="space-y-2">
-        <div>Wallet type: {walletType}</div>
-        <div>Name: {summary.name || "Not set"}</div>
-        <div className="">Address: {address}</div>
-        <div className="">
-          Wallet address: {summary.wallet ? summary.wallet : "Not set"}
-        </div>
-      </div>
-    </div>
-  );
+    fetchAuctions();
+  }, [fetchAuctions]);
+  useInterval(fetchAuctions, 5000);
 
   return (
     <main className={styles.main}>
-      <h1 className={styles.title}>
-        Welcome to the{" "}
-        <a
-          href="https://github.com/celo-org/use-contractkit"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <code className={styles.code}>use-contractkit</code>
-        </a>{" "}
-        workshop
-      </h1>
-
-      {address ? (
-        <ConnectedComponent />
+      {kit.defaultAccount ? (
+        <div className={styles.section}>
+          <AuctionTable
+            auctions={auctions}
+            bid={bid}
+            withdraw={withdraw}
+            cancel={cancel}
+          />
+          <AuctionModal createAuction={createAuction} />
+        </div>
       ) : (
-        <button className={styles.button} onClick={connect}>
-          Connect wallet
-        </button>
+        <div className={styles.section}>
+          Connect your wallet to see the running auctions and bid on them or
+          even create your own!
+        </div>
       )}
     </main>
   );
