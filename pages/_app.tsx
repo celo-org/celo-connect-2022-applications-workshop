@@ -6,8 +6,8 @@ import "@celo-tools/use-contractkit/lib/styles.css";
 import type { AppProps } from "next/app";
 
 import Layout from "../components/Layout";
+import Wallet from "../components/Wallet";
 import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
-
 
 function AppRoot({ Component, pageProps }: AppProps) {
   return (
@@ -21,6 +21,7 @@ function AppRoot({ Component, pageProps }: AppProps) {
       network={Alfajores}
     >
       <Layout>
+        <Wallet />
         {/* In next, all the pages your create end up here? */}
         <Component {...pageProps} />
       </Layout>
