@@ -144,9 +144,14 @@ const Home: NextPage = () => {
   }, [fetchAuctions]);
   useInterval(fetchAuctions, 5000);
 
+  // In the empty version of the app, we could show this
+  // const isAccountConnected = false;
+
+  const isAccountConnected = kit && kit.defaultAccount;
+
   return (
     <main className={styles.main}>
-      {kit.defaultAccount ? (
+      {isAccountConnected ? (
         <div className={styles.section}>
           <AuctionTable
             auctions={auctions}
