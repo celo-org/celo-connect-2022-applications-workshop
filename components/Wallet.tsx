@@ -1,13 +1,10 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { StableToken } from "@celo/contractkit";
 import BigNumber from "bignumber.js";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Header.module.css";
 
-const DEFAULT_SUMMARY = {
-  name: "",
-  address: "",
-  wallet: "",
+const DEFAULT_BALANCE_SUMMARY = {
   celo: new BigNumber(0),
   cusd: new BigNumber(0),
   ceur: new BigNumber(0),
@@ -18,33 +15,36 @@ const normalizedBalance = (balance: BigNumber) => {
 }
 
 export default function Wallet() {
-  const [summary, setSummary] = useState(DEFAULT_SUMMARY);
-  const { kit, address, destroy, connect } = useContractKit();
+  const { kit, address, network, destroy, connect } = useContractKit();
+  const [balanceSummary, setBalanceSummary] = useState(DEFAULT_BALANCE_SUMMARY);
 
   useEffect(() => {
     const fetchSummary = async () => {
       const address = kit.defaultAccount;
       if (!address) return;
 
-      const [accounts, goldToken, cUSD, cEUR] = await Promise.all([
-        kit.contracts.getAccounts(),
+      // There could be 2 separate steps in the workshop for the wallet part.
+      // 1st is to check whether there's an address connected
+      // and use the `connect` plus `address` that gets returned
+      // from `useContractKit`.This will be literally a couple of lines.
+      // It seemde that the summary from the accounts.getAccountSummary did
+      // not give anything that `useContractKit` doesn't.
+      // IMO it felt more powerful the fact that I don't have to do anything
+      // other than use "connect" to get the address.
+      // The 2nd step would be to then get the balance.
+
+      const [goldToken, cUSD, cEUR] = await Promise.all([
         kit.contracts.getGoldToken(),
         kit.contracts.getStableToken(StableToken.cUSD),
         kit.contracts.getStableToken(StableToken.cEUR),
       ]);
-
-      const [summary, celo, cusd, ceur] = await Promise.all([
-        accounts.getAccountSummary(address).catch((e) => {
-          console.error(e);
-          return DEFAULT_SUMMARY;
-        }),
+      const [celo, cusd, ceur] = await Promise.all([
         goldToken.balanceOf(address),
         cUSD.balanceOf(address),
         cEUR.balanceOf(address),
       ]);
 
-      setSummary({
-        ...summary,
+      setBalanceSummary({
         celo,
         cusd,
         ceur,
@@ -52,7 +52,7 @@ export default function Wallet() {
     };
 
     fetchSummary();
-  });
+  }, [kit]);
 
 
   return (
@@ -60,11 +60,11 @@ export default function Wallet() {
       {address ? (
         <>
           <div className={styles.summary}>
-            <code>{address}</code>
+            <code>{`Network: ${network.name} | Address: ${address}`}</code>
             <div className={styles.balances}>
-              <code>{normalizedBalance(summary.celo)} CELO</code>
-              <code>{normalizedBalance(summary.ceur)} cEUR</code>
-              <code>{normalizedBalance(summary.cusd)} cUSD</code>
+              <code>{normalizedBalance(balanceSummary.celo)} CELO</code>
+              <code>{normalizedBalance(balanceSummary.ceur)} cEUR</code>
+              <code>{normalizedBalance(balanceSummary.cusd)} cUSD</code>
             </div>
           </div>
           <button onClick={destroy}>Disconnect wallet</button>
