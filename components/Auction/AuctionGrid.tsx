@@ -3,7 +3,7 @@ import { useContractKit, Alfajores } from "@celo-tools/use-contractkit";
 import { useEffect, useMemo, useState } from "react";
 
 import useInterval from "../../utils/use-interval";
-import AuctionCard from "../AuctionCard";
+import AuctionCard from "./AuctionCard";
 import CreateAuctionModal from "./CreateAuction";
 
 import AuctionFactoryABI from "../../build/contracts/AuctionFactory.json";

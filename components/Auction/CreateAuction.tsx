@@ -1,7 +1,7 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 
 import { AuctionFactory } from "../../contracts-typings/AuctionFactory";
-import AuctionModal from "../AuctionModal";
+import AuctionModal from "../Base/AuctionModal";
 
 const MINUTE = 60;
 

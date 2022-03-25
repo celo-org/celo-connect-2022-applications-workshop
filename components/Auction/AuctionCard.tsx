@@ -7,8 +7,8 @@ import BigNumber from "bignumber.js";
 import { useContractKit, Alfajores, UseContractKit } from "@celo-tools/use-contractkit";
 import { useEffect, useState, useMemo } from "react";
 
-import AuctionABI from "../build/contracts/Auction.json";
-import { Auction as AuctionContract } from "../contracts-typings/Auction";
+import AuctionABI from "../../build/contracts/Auction.json";
+import { Auction as AuctionContract } from "../../contracts-typings/Auction";
 
 // Extract into UTIL?
 const getContract = (kit: UseContractKit['kit'], abi: any, address: string) => {
@@ -117,11 +117,10 @@ const AuctionCard = ({ auctionContractAddress } : { auctionContractAddress: stri
       </div>
       <div className={stylesCard.cardInfo}>
         <HighestBidInfo auctionContract={auctionContract} />
-          {/* <AuctionInfo  auctionContract={auctionContract}  owner={owner} /> */}
         <div className={stylesCard.actionsContainer}>
           {isOwnerOfAuction ?
             <OwnerActions auctionContract={auctionContract} /> :
-            <BidButton auctionContract={auctionContract} owner={owner} />
+            <BidButton auctionContract={auctionContract} />
           }
         </div>
       </div>

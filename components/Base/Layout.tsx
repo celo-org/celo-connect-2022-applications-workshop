@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "./Layout.module.css";
-import Header from "../components/Header";
+import Header from "./Header";
 
 const Layout: React.FC = ({ children }): React.ReactElement => {
   return (

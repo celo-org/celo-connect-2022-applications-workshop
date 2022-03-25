@@ -5,7 +5,7 @@ import "@celo-tools/use-contractkit/lib/styles.css";
 // Next specific
 import type { AppProps } from "next/app";
 
-import Layout from "../components/Layout";
+import Layout from "../components/Base/Layout";
 import Wallet from "../components/Wallet";
 import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
 

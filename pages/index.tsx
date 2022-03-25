@@ -10,7 +10,7 @@ import { auctionHouse } from "../utils/auction_house";
 import { Auction } from "../utils/auction";
 import useInterval from "../utils/use-interval";
 import AuctionTable from "../components/AuctionTable";
-import AuctionModal from "../components/AuctionModal";
+import AuctionModal from "../components/Base/AuctionModal";
 
 const MINUTE = 60;
 

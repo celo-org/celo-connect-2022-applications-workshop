@@ -1,4 +1,4 @@
-import styles from "./Header.module.css";
+import styles from "./Base/Header.module.css";
 
 export default function Wallet() {
   const address = false;
