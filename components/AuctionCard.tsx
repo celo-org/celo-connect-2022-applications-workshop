@@ -18,9 +18,35 @@ const getContract = (kit: UseContractKit['kit'], abi: any, address: string) => {
   );
 }
 
-const BidButton = ({ auctionContract, owner } : { auctionContract: AuctionContract, owner: string }) => {
+const BidButton = ({ auctionContract } : { auctionContract: AuctionContract }) => {
+  const { performActions } = useContractKit();
+
+  const bid = async () => {
+    await performActions(async (kit) => {
+      if (!kit.defaultAccount) return;
+
+      const bid = auctionContract.methods.placeBid();
+      const currentBid = await auctionContract.methods
+        .highestBindingBid()
+        .call();
+      const increment = new BigNumber(
+        await auctionContract.methods.bidIncrement().call()
+      );
+
+      const args = {
+        from: kit.defaultAccount,
+        data: bid.encodeABI(),
+        value: new BigNumber(currentBid).plus(increment).toString(),
+      };
+      const gas = await bid.estimateGas(args);
+
+      const result = await kit.sendTransaction({ ...args, gas });
+      console.log('result', result);
+    });
+  };
+
   return (
-    <button>Bid</button>
+    <button onClick={bid}>Bid</button>
   );
 }
 
