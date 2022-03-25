@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import AuctionGrid from "../components/AuctionGrid";
+import AuctionGrid from "../components/Auction/AuctionGrid";
 
 const AuctionPage: NextPage = () => {
   return (
