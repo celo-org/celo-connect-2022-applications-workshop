@@ -44,6 +44,7 @@ export default function AuctionModal({
         onRequestClose={closeModal}
         style={customStyles}
         contentLabel="Create auction"
+        ariaHideApp={false}
       >
         <div className={styles.modalBody}>
           <h2>Create auction</h2>
