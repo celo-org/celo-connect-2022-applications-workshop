@@ -37,3 +37,13 @@
   flex-direction: row;
   justify-content: space-between;
 }
+
+
+.wallet {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  align-items: flex-start;
+  gap: 10px;
+}
