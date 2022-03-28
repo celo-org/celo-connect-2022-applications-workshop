@@ -57,7 +57,7 @@ export default function Wallet() {
 
 
   return (
-    <div className="container">
+    <div className={styles.walletContainer}>
       {address ? (
         <>
           <div className={styles.summary}>
@@ -69,7 +69,7 @@ export default function Wallet() {
         </>
       ) : (
         <>
-          <button onClick={connect}>Connect wallet</button>
+          <button className={styles.disconnectWalletButton} onClick={connect}>Connect wallet</button>
         </>
       )}
     </div>
