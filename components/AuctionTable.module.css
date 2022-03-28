@@ -32,6 +32,6 @@
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #26b45c;
+  background-color: var(--main-green);
   color: white;
 }

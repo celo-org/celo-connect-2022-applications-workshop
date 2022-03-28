@@ -20,7 +20,7 @@
   margin-left: 1rem;
 }
 .header a:hover {
-  color: #26b45c;
+  color: var(--main-green);
 }
 
 .header code {
