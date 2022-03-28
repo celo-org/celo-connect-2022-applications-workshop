@@ -99,7 +99,6 @@ And that's it! That's all you need to connect to a wallet.
 
 You'll get to try it soon, but first, you need to have a Celo compatible wallet!
 
-
 ### 3. Fund your Metamask wallet with Celo so you can test your connect logic
 
 - Set up a Metamask wallet to work with Celo:
@@ -108,3 +107,105 @@ You'll get to try it soon, but first, you need to have a Celo compatible wallet!
 - Add funds to it using the faucet https://celo.org/developers/faucet
 
 - Test using the connect button to see if your address shows up!
+
+### 4. Expose balance of different coins in the wallet
+
+// TODO: Add instructions? If the workshop ends up too large, we could not include this.
+
+### 5. Get list of auctions
+
+There are 2 contracts you'll need to interact with, the Auction Factory and the Auction (individual) one.
+To get the list of current auctions, you'll need the Auction Factory.
+
+Steps:
+
+- Initialize the Auction Factory contract
+- Use the allAuctions() method to get the existing auctions
+- Check if there is a wallet connected by using kit
+
+```diff
+[...]
+
+import AuctionFactoryABI from "../../build/contracts/AuctionFactory.json";
+import { AuctionFactory } from "../../contracts-typings/AuctionFactory";
+
+const abi = AuctionFactoryABI.abi as any;
+const factoryContractAddress = AuctionFactoryABI.networks[Alfajores.chainId].address;
+
+const AuctionGrid: React.FC = () => {
++  const { kit } = useContractKit();
+  const [auctions, setAuctions] = useState<string[]>([]);
+  const [status, setStatus] = useState('idle')
+  const [refresh, setRefresh] = useState({ refresh: false });
+
+  // Initiate contract using ABI to have access to its methods
++  const auctionFactoryContract = useMemo(() => new kit.web3.eth.Contract(
++      abi,
++      factoryContractAddress
++    ),
++    [kit]) as unknown as AuctionFactory;
+
+  useInterval(() => setRefresh({ refresh: true }), 5000);
+
+  useEffect(() => {
+    const fetchAuctions = async () => {
++      if (!kit) return;
+
++      // Get all existing auctions with the method from the address
++      const allAuctionAdresses = await auctionFactoryContract.methods.allAuctions().call();
++      setAuctions(allAuctionAdresses);
+    };
+
+    setStatus('loading');
+    fetchAuctions()
+      .then(() => setStatus('loaded'))
+      .catch(() => setStatus('error'));
+  }, [kit, auctionFactoryContract, refresh]);
+
+- const isAccountConnected = false;
++  const isAccountConnected = kit && kit.defaultAccount;
+
+  if (!isAccountConnected) {
+    return (
+      <div>
+        <p>
+          Connect your wallet to see your auctions.
+        </p>
+      </div>
+    );
+  }
+
+  if (status === 'loaded' && auctions.length === 0) {
+    return (
+      <div>
+        <p>
+          No auctions yet.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+    <CreateAuctionModal auctionFactoryContract={auctionFactoryContract} />
+    <div className={styles.main}>
+      {auctions.map((auctionAddress) => {
+        return (
+          <AuctionCard auctionContractAddress={auctionAddress} key={auctionAddress} />
+        )
+      })}
+    </div>
+    </>
+
+  )
+};
+
+export default AuctionGrid;
+```
+
+### 6. Allow user to create auction
+
+- Import CreateAuctionModal to AuctionGrid
+```
+<CreateAuctionModal auctionFactoryContract={auctionFactoryContract} />
+```
