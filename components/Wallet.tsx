@@ -3,7 +3,7 @@ import { StableToken } from "@celo/contractkit";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
 import { Balance } from "./Base/Balance";
-import styles from "./Base/Header.module.css";
+import styles from "./Wallet.module.css";
 
 const DEFAULT_BALANCE_SUMMARY = {
   celo: new BigNumber(0),
