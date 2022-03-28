@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 import { auctionHouse } from "../utils/auction_house";
 import { Auction } from "../utils/auction";
 import useInterval from "../utils/use-interval";
-import AuctionTable from "../components/AuctionTable";
+import AuctionTable from "../components/Initial/AuctionTable";
 import AuctionModal from "../components/Base/AuctionModal";
 
 const MINUTE = 60;

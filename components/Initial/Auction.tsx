@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { formatDistance } from "date-fns";
 import React, { useEffect, useState } from "react";
 import Image from "react-image-enlarger";
-import { Auction as AuctionClass, AuctionData } from "../utils/auction";
+import { Auction as AuctionClass, AuctionData } from "../../utils/auction";
 
 export default function Auction({
   data,

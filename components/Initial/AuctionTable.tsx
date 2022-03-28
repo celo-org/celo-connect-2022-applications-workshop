@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import type { Auction, AuctionData } from "../utils/auction";
+import type { Auction, AuctionData } from "../../utils/auction";
 import AuctionRow from "./Auction";
 import styles from "./AuctionTable.module.css";
 
