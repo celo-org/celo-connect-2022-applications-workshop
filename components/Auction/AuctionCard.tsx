@@ -9,6 +9,8 @@ import { useEffect, useState, useMemo } from "react";
 
 import AuctionABI from "../../build/contracts/Auction.json";
 import { Auction as AuctionContract } from "../../contracts-typings/Auction";
+import PlaceholderSvg from "../Base/PlaceholderSvg";
+import Img from "../Base/Image";
 
 // Extract into UTIL?
 const getContract = (kit: UseContractKit['kit'], abi: any, address: string) => {
@@ -112,9 +114,7 @@ const AuctionCard = ({ auctionContractAddress } : { auctionContractAddress: stri
 
   return (
     <div className={stylesCard.card}>
-      <div className={stylesCard.imageContainer}>
-        {url === "" ? "Loading" : <img src={url} alt="Artwork for bid" width={400}/>}
-      </div>
+      <Img url={url} />
       <div className={stylesCard.cardInfo}>
         <HighestBidInfo auctionContract={auctionContract} />
         <div className={stylesCard.actionsContainer}>
