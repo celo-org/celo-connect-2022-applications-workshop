@@ -8,6 +8,7 @@ import type { AppProps } from "next/app";
 import Layout from "../components/Base/Layout";
 import Wallet from "../components/Wallet";
 import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
+import Spacer from "../components/Base/Spacer";
 
 function AppRoot({ Component, pageProps }: AppProps) {
   return (
@@ -22,6 +23,7 @@ function AppRoot({ Component, pageProps }: AppProps) {
     >
       <Layout>
         <Wallet />
+        <Spacer axis="vertical" size={32} />
         {/* In next, all the pages your create within `/pages` will be displayed here */}
         <Component {...pageProps} />
       </Layout>

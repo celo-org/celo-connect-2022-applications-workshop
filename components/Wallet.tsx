@@ -65,11 +65,11 @@ export default function Wallet() {
             <code>{`Address: ${address}`}</code>
             <Balance {...balanceSummary} />
           </div>
-          <button className={styles.redButton} onClick={destroy}>Disconnect wallet</button>
+          <button className={styles.disconnectWalletButton} onClick={destroy}>Disconnect wallet</button>
         </>
       ) : (
         <>
-          <button className={styles.disconnectWalletButton} onClick={connect}>Connect wallet</button>
+          <button onClick={connect}>Connect wallet</button>
         </>
       )}
     </div>

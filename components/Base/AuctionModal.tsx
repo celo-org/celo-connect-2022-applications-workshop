@@ -37,8 +37,8 @@ export default function AuctionModal({
   );
 
   return (
-    <div>
-      <button onClick={openModal}>Create auction</button>
+    <div className={styles.container}>
+      <button className={styles.createAuctionButton} onClick={openModal}>Create auction</button>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}

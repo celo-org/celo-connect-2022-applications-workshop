@@ -1,3 +1,9 @@
+.container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
 .modalBody {
   display: flex;
   flex-direction: column;
@@ -11,6 +17,7 @@
   display: flex;
   flex-direction: column;
 }
+
 .inputSection input {
   width: 100%;
   padding: 12px 20px;
@@ -27,4 +34,19 @@
 }
 .buttonSection button:first-child {
   margin-right: 1rem;
+}
+
+.createAuctionButton {
+  border: 2px solid var(--main-green);
+  background-color: white;
+  color: var(--main-green);
+}
+
+.createAuctionButton:hover, .createAuctionButton:focus {
+  background-color: var(--main-green);
+  color: white;
+}
+
+.createAuctionButton:focus {
+  border: 2px solid var(--light-green);
 }

@@ -8,6 +8,7 @@ import CreateAuctionModal from "./CreateAuction";
 
 import AuctionFactoryABI from "../../build/contracts/AuctionFactory.json";
 import { AuctionFactory } from "../../contracts-typings/AuctionFactory";
+import Spacer from "../Base/Spacer";
 
 const abi = AuctionFactoryABI.abi as any;
 const factoryContractAddress = AuctionFactoryABI.networks[Alfajores.chainId].address;
@@ -66,17 +67,17 @@ const AuctionGrid: React.FC = () => {
   }
 
   return (
-    <>
-    <CreateAuctionModal auctionFactoryContract={auctionFactoryContract} />
-    <div className={styles.main}>
-      {auctions.map((auctionAddress) => {
-        return (
-          <AuctionCard auctionContractAddress={auctionAddress} key={auctionAddress} />
-        )
-      })}
+    <div>
+      <CreateAuctionModal auctionFactoryContract={auctionFactoryContract} />
+      <Spacer axis="vertical" size={32} />
+      <div className={styles.main}>
+        {auctions.map((auctionAddress) => {
+          return (
+            <AuctionCard auctionContractAddress={auctionAddress} key={auctionAddress} />
+          )
+        })}
+      </div>
     </div>
-    </>
-
   )
 };
 
