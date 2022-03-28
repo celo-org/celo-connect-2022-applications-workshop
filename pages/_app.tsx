@@ -22,7 +22,7 @@ function AppRoot({ Component, pageProps }: AppProps) {
     >
       <Layout>
         <Wallet />
-        {/* In next, all the pages your create end up here? */}
+        {/* In next, all the pages your create within `/pages` will be displayed here */}
         <Component {...pageProps} />
       </Layout>
 
