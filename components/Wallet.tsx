@@ -2,6 +2,7 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { StableToken } from "@celo/contractkit";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
+import { Balance } from "./Base/Balance";
 import styles from "./Base/Header.module.css";
 
 const DEFAULT_BALANCE_SUMMARY = {
@@ -60,14 +61,11 @@ export default function Wallet() {
       {address ? (
         <>
           <div className={styles.summary}>
-            <code>{`Network: ${network.name} | Address: ${address}`}</code>
-            <div className={styles.balances}>
-              <code>{normalizedBalance(balanceSummary.celo)} CELO</code>
-              <code>{normalizedBalance(balanceSummary.ceur)} cEUR</code>
-              <code>{normalizedBalance(balanceSummary.cusd)} cUSD</code>
-            </div>
+            <p className={styles.networkTag}>{`Connected to ${network.name}`}</p>
+            <code>{`Address: ${address}`}</code>
+            <Balance {...balanceSummary} />
           </div>
-          <button onClick={destroy}>Disconnect wallet</button>
+          <button className={styles.redButton} onClick={destroy}>Disconnect wallet</button>
         </>
       ) : (
         <>
