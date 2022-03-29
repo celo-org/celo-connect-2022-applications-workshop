@@ -19,7 +19,7 @@ const customStyles = {
   },
 };
 
-enum Status {
+enum AuctionCreationStatus {
   Idle = "Idle",
   Pending ="Pending",
   Success=  "Success",
@@ -36,7 +36,7 @@ export default function AuctionModal({
   const [bidTime, setBidTime] = useState(5);
   const [modalIsOpen, setIsOpen] = useState(false);
 
-  const [creationStatus, setCreationStatus] = useState<Status>(Status.Idle);
+  const [creationStatus, setCreationStatus] = useState<AuctionCreationStatus>(AuctionCreationStatus.Idle);
 
   useEffect(() => {
     if (!modalIsOpen) return;
@@ -45,22 +45,22 @@ export default function AuctionModal({
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => {
-    setCreationStatus(Status.Idle);
+    setCreationStatus(AuctionCreationStatus.Idle);
     setIsOpen(false);
   };
 
   const onCreateClick = async () => {
-    setCreationStatus(Status.Pending);
+    setCreationStatus(AuctionCreationStatus.Pending);
     try {
       const [transaction] = await createAuction(imageUrl, bidTime);
 
       await transaction.getHash();
-      setCreationStatus(Status.TransactionApproved);
+      setCreationStatus(AuctionCreationStatus.TransactionApproved);
 
       await transaction.waitReceipt();
-      setCreationStatus(Status.Success);
+      setCreationStatus(AuctionCreationStatus.Success);
     } catch (e) {
-      setCreationStatus(Status.Error);
+      setCreationStatus(AuctionCreationStatus.Error);
     }
   }
 
@@ -98,7 +98,7 @@ export default function AuctionModal({
 
   let modalContent = null;
   switch (creationStatus) {
-    case Status.Pending:
+    case AuctionCreationStatus.Pending:
       modalContent = (
         <div className={styles.updateContainer}>
           <div className={styles.spinner}>
@@ -112,7 +112,7 @@ export default function AuctionModal({
         </div>
       );
       break;
-    case Status.Error:
+    case AuctionCreationStatus.Error:
       modalContent = (
         <div className={styles.updateContainer}>
           <div className={styles.emoji}>
@@ -122,10 +122,10 @@ export default function AuctionModal({
         </div>
       );
       break;
-    case Status.Idle:
+    case AuctionCreationStatus.Idle:
       modalContent = createAuctionForm
       break;
-    case Status.TransactionApproved:
+    case AuctionCreationStatus.TransactionApproved:
       modalContent = (
         <div className={styles.updateContainer}>
           <div className={styles.spinner}>
@@ -140,7 +140,7 @@ export default function AuctionModal({
         </div>
       );
       break;
-    case Status.Success:
+    case AuctionCreationStatus.Success:
       modalContent = (
         <div className={styles.updateContainer}>
           <div className={styles.emoji}>
@@ -154,7 +154,7 @@ export default function AuctionModal({
       break;
   }
 
-  const disabledButton = creationStatus !== Status.Idle;
+  const disabledButton = creationStatus !== AuctionCreationStatus.Idle;
   return (
     <div className={styles.container}>
       <button className={styles.createAuctionButton} onClick={openModal}>Create auction</button>
