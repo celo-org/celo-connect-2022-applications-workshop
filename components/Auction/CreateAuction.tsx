@@ -1,9 +1,14 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 
-import { AuctionFactory } from "../../contracts-typings/AuctionFactory";
 import AuctionModal from "../Base/AuctionModal";
 
+// Types
+import { ContractKit } from "@celo/contractkit";
+import { AuctionFactory } from "../../contracts-typings/AuctionFactory";
+
 const MINUTE = 60;
+
+export type TransactionResult = Awaited<ReturnType<ContractKit['sendTransaction']>>;
 
 // In this component, we'll focus on building the action part.
 // The logic and visual part of the modal itself has been abstracted into AuctionModal
@@ -12,14 +17,13 @@ const MINUTE = 60;
 const CreateAuctionModal = ({ auctionFactoryContract }: {auctionFactoryContract: AuctionFactory }) => {
   const { performActions } = useContractKit();
 
-  // TODO: Can the bid time be abstracted and not mentioned at all?
   const createAuction = async (imageUrl: string, bidTime = 5) => {
-      await performActions(async (kit) => {
+      return await performActions(async (kit) => {
         if (!kit.defaultAccount) return;
 
-        // TODO: Clarify what this part is for
-        const currentBlock = (await kit.web3.eth.getBlockNumber()) + 2; // add two block padding
+        const currentBlock = (await kit.web3.eth.getBlockNumber()) + 1; // add two block padding
         const endingBlock = Math.ceil(currentBlock + (bidTime * MINUTE) / 5);
+
         const createActionTx = auctionFactoryContract.methods.createAuction(
           1, // baby bid
           currentBlock,
@@ -34,8 +38,8 @@ const CreateAuctionModal = ({ auctionFactoryContract }: {auctionFactoryContract:
 
         const gas = await createActionTx.estimateGas(args);
 
-        return kit.sendTransaction({ ...args, gas });
-      });
+        return await kit.sendTransaction({ ...args, gas });
+      }) as TransactionResult[];
     };
 
   return (

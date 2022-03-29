@@ -9,7 +9,11 @@
   flex-direction: column;
   align-items: center;
   padding: 0 3rem;
+  min-height: 700px;
+  min-width: 500px;
+  justify-content: space-between;
 }
+
 .modalBody > * {
   padding-bottom: 1rem;
 }
@@ -49,4 +53,33 @@
 
 .createAuctionButton:focus {
   border: 2px solid var(--light-green);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.spinner {
+  animation: spin 1000ms;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.updateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.emoji {
+  font-size: 40px;
 }
