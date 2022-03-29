@@ -1,18 +1,15 @@
-import styles from "../pages/Home.module.css";
 import stylesCard from "./AuctionCard.module.css"
-
-import Image from "react-image-enlarger";
-
-import BigNumber from "bignumber.js";
-import { useContractKit, Alfajores, UseContractKit } from "@celo-tools/use-contractkit";
-import { useEffect, useState, useMemo } from "react";
+import { useContractKit, UseContractKit } from "@celo-tools/use-contractkit";
+import { useEffect, useState, useMemo, useCallback } from "react";
 
 import AuctionABI from "../../build/contracts/Auction.json";
 import { Auction as AuctionContract } from "../../contracts-typings/Auction";
-import PlaceholderSvg from "../Base/PlaceholderSvg";
 import Img from "../Base/Image";
+import HighestBidInfo from "./Info/HighestBidInfo";
+import BidButton from "./Info/BidButton";
+import TimeLeft from "./Info/TimeLeft";
+import OwnerActions from "./Info/OwnerActionButtons";
 
-// Extract into UTIL?
 const getContract = (kit: UseContractKit['kit'], abi: any, address: string) => {
   return new kit.web3.eth.Contract(
     abi,
@@ -20,79 +17,23 @@ const getContract = (kit: UseContractKit['kit'], abi: any, address: string) => {
   );
 }
 
-const BidButton = ({ auctionContract } : { auctionContract: AuctionContract }) => {
-  const { performActions } = useContractKit();
-
-  const bid = async () => {
-    await performActions(async (kit) => {
-      if (!kit.defaultAccount) return;
-
-      const bid = auctionContract.methods.placeBid();
-      const currentBid = await auctionContract.methods
-        .highestBindingBid()
-        .call();
-      const increment = new BigNumber(
-        await auctionContract.methods.bidIncrement().call()
-      );
-
-      const args = {
-        from: kit.defaultAccount,
-        data: bid.encodeABI(),
-        value: new BigNumber(currentBid).plus(increment).toString(),
-      };
-      const gas = await bid.estimateGas(args);
-
-      const result = await kit.sendTransaction({ ...args, gas });
-      console.log('result', result);
-    });
-  };
-
-  return (
-    <button onClick={bid}>Bid</button>
-  );
-}
-
-const OwnerActions = ({ auctionContract } : { auctionContract: AuctionContract }) => {
-  return (
-    <>
-      <button>Cancel</button>
-      <button>Withdraw</button>
-    </>
-  );
-};
-
-const HighestBidInfo = ({ auctionContract } : { auctionContract: AuctionContract }) => {
-  const { address: walletAddress } = useContractKit();
-  const [highestBidderAddress, setHighestBidderAddress] = useState<string>('');
-  const [highestBid, setHighestBid] = useState<string>('');
-
-  useEffect(() => {
-    const getAuctionData = async () => {
-      const highestBidderAddress = await auctionContract.methods.highestBidder().call();
-      const highestBid = await auctionContract.methods.highestBindingBid().call();
-      setHighestBidderAddress(highestBidderAddress);
-      setHighestBid(highestBid);
-    }
-
-    getAuctionData();
-  }, [auctionContract])
-
-    const noBidder = new BigNumber(highestBidderAddress).eq(0);
-    const bidAmount = noBidder ? "NO BID" : `${highestBid} CELO`;
-    const shortenedBidderAddress = noBidder ? ''
-      : 'from' + highestBidderAddress.substring(0, 5) + '...' + highestBidderAddress.substring(37 ,42);
-    return (
-      <div className={stylesCard.bidOffer}>
-        <div className={stylesCard.bidTitle}>Highest offer</div>
-        <div className={stylesCard.bid}>{bidAmount}</div>
-        <div className={stylesCard.bidTitle}>{shortenedBidderAddress}</div>
-      </div>
-    );
+export enum AuctionStatus {
+  CANCELED = 'Canceled',
+  ENDED = 'Ended',
+  ACTIVE = 'Active',
 }
 
 const AuctionCard = ({ auctionContractAddress } : { auctionContractAddress: string }) => {
   const [url, setUrl] = useState('');
   const [owner, setOwner] = useState('');
+  const [canBid, setCanBid] = useState(true);
+  const allowBid = useCallback(
+    (bool: boolean) => {
+      setCanBid(bool)
+    },
+    [],
+  );
+
   const { kit, address: walletAddress } = useContractKit();
 
   const auctionContract = useMemo(() => getContract(kit, AuctionABI.abi, auctionContractAddress),
@@ -115,12 +56,15 @@ const AuctionCard = ({ auctionContractAddress } : { auctionContractAddress: stri
   return (
     <div className={stylesCard.card}>
       <Img url={url} />
-      <div className={stylesCard.cardInfo}>
-        <HighestBidInfo auctionContract={auctionContract} />
+      <div className={stylesCard.cardContent}>
+        <div className={stylesCard.cardInfo}>
+          <HighestBidInfo auctionContract={auctionContract} />
+          <TimeLeft auctionContract={auctionContract} allowBid={allowBid} />
+        </div>
         <div className={stylesCard.actionsContainer}>
           {isOwnerOfAuction ?
             <OwnerActions auctionContract={auctionContract} /> :
-            <BidButton auctionContract={auctionContract} />
+            <BidButton auctionContract={auctionContract} disabled={!canBid} />
           }
         </div>
       </div>
