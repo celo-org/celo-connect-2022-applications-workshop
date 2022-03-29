@@ -17,15 +17,13 @@ contract AuctionFactory {
 
     function createAuction(
         uint256 bidIncrement,
-        uint256 startBlock,
-        uint256 endBlock,
+        uint256 bidDuration,
         string memory imgUrl
     ) public {
         Auction newAuction = new Auction(
             msg.sender,
             bidIncrement,
-            startBlock,
-            endBlock,
+            bidDuration,
             imgUrl
         );
         auctions.push(address(newAuction));

@@ -4,7 +4,7 @@ import React, { ChangeEvent, useEffect, useState, useReducer } from "react";
 import Modal from "react-modal";
 
 import NextImage from "next/image";
-import Image from './Image';
+import Image from "./Image";
 import styles from "./AuctionModal.module.css";
 import { TransactionResult } from "../Auction/CreateAuction";
 
@@ -21,26 +21,33 @@ const customStyles = {
 
 enum AuctionCreationStatus {
   Idle = "Idle",
-  Pending ="Pending",
-  Success=  "Success",
-  TransactionApproved =  "TransactionApproved",
-  Error=  "Error"
-};
+  Pending = "Pending",
+  Success = "Success",
+  TransactionApproved = "TransactionApproved",
+  Error = "Error",
+}
 
 export default function AuctionModal({
   createAuction,
 }: {
-  createAuction: (imageUrl: string, bidTime: number) => Promise<TransactionResult[]>;
+  createAuction: (
+    imageUrl: string,
+    bidTime: number
+  ) => Promise<TransactionResult[]>;
 }) {
   const [imageUrl, setImageUrl] = useState("");
   const [bidTime, setBidTime] = useState(5);
   const [modalIsOpen, setIsOpen] = useState(false);
 
-  const [creationStatus, setCreationStatus] = useState<AuctionCreationStatus>(AuctionCreationStatus.Idle);
+  const [creationStatus, setCreationStatus] = useState<AuctionCreationStatus>(
+    AuctionCreationStatus.Idle
+  );
 
   useEffect(() => {
     if (!modalIsOpen) return;
-    setImageUrl(`https://picsum.photos/seed/${randomBytes(16).toString("hex")}/300`);
+    setImageUrl(
+      `https://picsum.photos/seed/${randomBytes(16).toString("hex")}/300`
+    );
   }, [modalIsOpen]);
 
   const openModal = () => setIsOpen(true);
@@ -60,35 +67,28 @@ export default function AuctionModal({
       await transaction.waitReceipt();
       setCreationStatus(AuctionCreationStatus.Success);
     } catch (e) {
+      console.error(e);
       setCreationStatus(AuctionCreationStatus.Error);
     }
-  }
+  };
 
   const onInputChange = (event: ChangeEvent<{ value: string }>) => {
-    setImageUrl(event.target.value)
-  }
+    setImageUrl(event.target.value);
+  };
 
   const createAuctionForm = (
     <>
       <div>
         <div className={styles.inputSection}>
           <label htmlFor="url">Image URL to be auctioned</label>
-          <input
-            type="url"
-            value={imageUrl}
-            onChange={onInputChange}
-          />
+          <input type="url" value={imageUrl} onChange={onInputChange} />
         </div>
         <div className={styles.inputSection}>
-          <label htmlFor="bidtime">
-            Duration of the auction (in minutes)
-          </label>
+          <label htmlFor="bidtime">Duration of the auction (in minutes)</label>
           <input
             type="number"
             value={bidTime}
-            onChange={(event) =>
-              setBidTime(Number(event.target.value.trim()))
-            }
+            onChange={(event) => setBidTime(Number(event.target.value.trim()))}
           />
         </div>
         <Image url={imageUrl} />
@@ -102,11 +102,7 @@ export default function AuctionModal({
       modalContent = (
         <div className={styles.updateContainer}>
           <div className={styles.spinner}>
-          <NextImage
-            src="/loader.svg"
-            alt="Conference Logo"
-            layout="fill"
-          />
+            <NextImage src="/loader.svg" alt="Conference Logo" layout="fill" />
           </div>
           <div>Check wallet to approve transaction...</div>
         </div>
@@ -115,37 +111,31 @@ export default function AuctionModal({
     case AuctionCreationStatus.Error:
       modalContent = (
         <div className={styles.updateContainer}>
-          <div className={styles.emoji}>
-            ❌
-          </div>
+          <div className={styles.emoji}>❌</div>
           <div>Error processing transaction</div>
         </div>
       );
       break;
     case AuctionCreationStatus.Idle:
-      modalContent = createAuctionForm
+      modalContent = createAuctionForm;
       break;
     case AuctionCreationStatus.TransactionApproved:
       modalContent = (
         <div className={styles.updateContainer}>
           <div className={styles.spinner}>
-          <NextImage
-            src="/loader.svg"
-            alt="Conference Logo"
-            layout="fill"
-          />
+            <NextImage src="/loader.svg" alt="Conference Logo" layout="fill" />
           </div>
           <div>☑️ Transaction approved!</div>
-          <div>Waiting for transaction to be processed in Celo blockchain...</div>
+          <div>
+            Waiting for transaction to be processed in Celo blockchain...
+          </div>
         </div>
       );
       break;
     case AuctionCreationStatus.Success:
       modalContent = (
         <div className={styles.updateContainer}>
-          <div className={styles.emoji}>
-          👏
-          </div>
+          <div className={styles.emoji}>👏</div>
           <div>Auction created!</div>
         </div>
       );
@@ -157,7 +147,9 @@ export default function AuctionModal({
   const disabledButton = creationStatus !== AuctionCreationStatus.Idle;
   return (
     <div className={styles.container}>
-      <button className={styles.createAuctionButton} onClick={openModal}>Create auction</button>
+      <button className={styles.createAuctionButton} onClick={openModal}>
+        Create auction
+      </button>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -169,7 +161,9 @@ export default function AuctionModal({
           <h2>Create auction</h2>
           {modalContent}
           <div className={styles.buttonSection}>
-            <button onClick={onCreateClick} disabled={disabledButton}>Create auction</button>
+            <button onClick={onCreateClick} disabled={disabledButton}>
+              Create auction
+            </button>
             <button onClick={closeModal}>close</button>
           </div>
         </div>

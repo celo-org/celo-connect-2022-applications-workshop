@@ -51,6 +51,8 @@ export interface Auction extends BaseContract {
   ): Auction;
   clone(): Auction;
   methods: {
+    bidDuration(): NonPayableTransactionObject<string>;
+
     bidIncrement(): NonPayableTransactionObject<string>;
 
     canceled(): NonPayableTransactionObject<boolean>;

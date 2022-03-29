@@ -44,8 +44,7 @@ export interface AuctionFactory extends BaseContract {
 
     createAuction(
       bidIncrement: number | string | BN,
-      startBlock: number | string | BN,
-      endBlock: number | string | BN,
+      bidDuration: number | string | BN,
       imgUrl: string
     ): NonPayableTransactionObject<void>;
 

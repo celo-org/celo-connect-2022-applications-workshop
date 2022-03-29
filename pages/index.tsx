@@ -6,22 +6,26 @@ import isURL from "validator/lib/isURL";
 
 import type { NextPage } from "next";
 import { useCallback, useEffect, useState } from "react";
-import { auctionHouse } from "../utils/auction_house";
 import { Auction } from "../utils/auction";
 import useInterval from "../utils/use-interval";
 import AuctionTable from "../components/Initial/AuctionTable";
 import AuctionModal from "../components/Base/AuctionModal";
+import { auctionHouseFactory } from "../utils/auction_house";
+import { TransactionResult } from "../components/Auction/CreateAuction";
 
-const MINUTE = 60;
+const MINUTE = 60; // seconds
+const BLOCK_TIME = 5; // seconds
 
 const Home: NextPage = () => {
-  const { kit, connect, walletType, performActions } = useContractKit();
+  const { kit, performActions } = useContractKit();
   const [auctions, setAuctions] = useState<Auction[]>([]);
 
   const fetchAuctions = useCallback(async () => {
     if (!kit) return;
 
-    const allAuctionAdresses = await auctionHouse.methods.allAuctions().call();
+    const allAuctionAdresses = await auctionHouseFactory(kit)
+      .methods.allAuctions()
+      .call();
     const allAuctions = allAuctionAdresses.map(
       (address) => new Auction(kit, address)
     );
@@ -30,18 +34,15 @@ const Home: NextPage = () => {
   }, [kit]);
 
   const createAuction = useCallback(
-    async (imageUrl: string, bidTime = 5) => {
-      if (!isURL(imageUrl)) return;
+    (imageUrl: string, bidTime = 5) => {
+      if (!isURL(imageUrl)) throw new Error("An image URL must be provided");
 
-      await performActions(async (k) => {
+      return performActions(async (k) => {
         if (!k.defaultAccount) return;
 
-        const currentBlock = (await k.web3.eth.getBlockNumber()) + 2; // add two block padding
-        const endingBlock = Math.ceil(currentBlock + (bidTime * MINUTE) / 5);
-        const auction = auctionHouse.methods.createAuction(
+        const auction = auctionHouseFactory(k).methods.createAuction(
           1, // baby bid
-          currentBlock,
-          endingBlock,
+          Math.ceil((bidTime * MINUTE) / BLOCK_TIME),
           imageUrl
         );
         const args = {
@@ -52,18 +53,19 @@ const Home: NextPage = () => {
 
         setTimeout(() => fetchAuctions(), 5000);
         return k.sendTransaction({ ...args, gas });
-      });
+      }) as Promise<TransactionResult[]>;
     },
     [performActions, fetchAuctions]
   );
 
   const bid = useCallback(
-    async (auctionAddress: string) => {
-      if (!auctionAddress) return;
-      const auction = auctions.find((x) => x.address === auctionAddress);
-      if (!auction) return;
+    (auctionAddress: string) => {
+      if (!auctionAddress) throw new Error(`No address provided`);
 
-      await performActions(async (k) => {
+      const auction = auctions.find((x) => x.address === auctionAddress);
+      if (!auction) throw new Error(`Unknown auction ${auctionAddress}`);
+
+      return performActions(async (k) => {
         if (!k.defaultAccount) return;
 
         const bid = auction.contract.methods.placeBid();
@@ -82,18 +84,19 @@ const Home: NextPage = () => {
         const gas = await bid.estimateGas(args);
 
         return k.sendTransaction({ ...args, gas });
-      });
+      }) as Promise<TransactionResult[]>;
     },
     [performActions, auctions]
   );
 
   const withdraw = useCallback(
-    async (auctionAddress: string) => {
-      if (!auctionAddress) return;
-      const auction = auctions.find((x) => x.address === auctionAddress);
-      if (!auction) return;
+    (auctionAddress: string) => {
+      if (!auctionAddress) throw new Error(`No address provided`);
 
-      await performActions(async (k) => {
+      const auction = auctions.find((x) => x.address === auctionAddress);
+      if (!auction) throw new Error(`Unknown auction ${auctionAddress}`);
+
+      return performActions(async (k) => {
         if (!k.defaultAccount) return;
 
         const data = await auction.getData();
@@ -108,18 +111,19 @@ const Home: NextPage = () => {
         const gas = await widthdraw.estimateGas(args);
 
         return k.sendTransaction({ ...args, gas });
-      });
+      }) as Promise<TransactionResult[]>;
     },
     [performActions, auctions]
   );
 
   const cancel = useCallback(
-    async (auctionAddress: string) => {
-      if (!auctionAddress) return;
-      const auction = auctions.find((x) => x.address === auctionAddress);
-      if (!auction) return;
+    (auctionAddress: string) => {
+      if (!auctionAddress) throw new Error(`No address provided`);
 
-      await performActions(async (k) => {
+      const auction = auctions.find((x) => x.address === auctionAddress);
+      if (!auction) throw new Error(`Unknown auction ${auctionAddress}`);
+
+      return performActions(async (k) => {
         if (!k.defaultAccount) return;
 
         const data = await auction.getData();
@@ -134,7 +138,7 @@ const Home: NextPage = () => {
         const gas = await cancel.estimateGas(args);
 
         return k.sendTransaction({ ...args, gas });
-      });
+      }) as Promise<TransactionResult[]>;
     },
     [performActions, auctions]
   );

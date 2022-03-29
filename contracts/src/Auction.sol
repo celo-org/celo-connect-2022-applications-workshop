@@ -7,6 +7,7 @@ contract Auction {
     uint256 public bidIncrement;
     // uint256 public instantBuyout;
     uint256 public startBlock;
+    uint256 public bidDuration;
     uint256 public endBlock;
     string public imgUrl;
 
@@ -36,22 +37,18 @@ contract Auction {
         address _owner,
         uint256 _bidIncrement,
         // uint256 _instantBuyout,
-        uint256 _startBlock,
-        uint256 _endBlock,
+        uint256 _bidDuration,
         string memory _imgUrl
     ) {
-        require(_startBlock < _endBlock, "Start block must be before endBlock");
-        require(
-            _startBlock >= block.number,
-            "Start block must not be in the past"
-        );
+        require(_bidDuration > 0, "Block duration must be strictly positive");
         require(_owner != address(0), "Owner must be a valid address");
 
         owner = _owner;
         bidIncrement = _bidIncrement;
         // instantBuyout = _instantBuyout;
-        startBlock = _startBlock;
-        endBlock = _endBlock;
+        startBlock = block.number;
+        bidDuration = _bidDuration;
+        endBlock = startBlock + bidDuration;
         imgUrl = _imgUrl;
     }
 
@@ -199,32 +196,38 @@ contract Auction {
     }
 
     modifier onlyOwner() {
-        assert(msg.sender == owner);
+        require(msg.sender == owner, "Sender must be owner");
         _;
     }
 
     modifier onlyNotOwner() {
-        assert(msg.sender != owner);
+        require(msg.sender != owner, "Sender cannot be owner");
         _;
     }
 
     modifier onlyAfterStart() {
-        assert(block.number > startBlock);
+        require(block.number > startBlock, "Auction must have started");
         _;
     }
 
     modifier onlyBeforeEnd() {
-        assert(block.number <= endBlock);
+        require(
+            block.number <= startBlock + bidDuration,
+            "Auction cannot have ended"
+        );
         _;
     }
 
     modifier onlyNotCanceled() {
-        assert(!canceled);
+        require(!canceled, "Auction cannot be canceled");
         _;
     }
 
     modifier onlyEndedOrCanceled() {
-        assert(block.number >= endBlock || canceled);
+        require(
+            block.number >= (startBlock + bidDuration) || canceled,
+            "Auction must have ended or been canceled"
+        );
         _;
     }
 }
