@@ -21,7 +21,7 @@ const CreateAuctionModal = ({ auctionFactoryContract }: {auctionFactoryContract:
       return await performActions(async (kit) => {
         if (!kit.defaultAccount) return;
 
-        const currentBlock = (await kit.web3.eth.getBlockNumber()) + 1; // add two block padding
+        const currentBlock = (await kit.web3.eth.getBlockNumber()) + 10; // add two block padding
         const endingBlock = Math.ceil(currentBlock + (bidTime * MINUTE) / 5);
 
         const createActionTx = auctionFactoryContract.methods.createAuction(
