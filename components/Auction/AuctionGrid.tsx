@@ -9,6 +9,7 @@ import CreateAuctionModal from "./CreateAuction";
 import AuctionFactoryABI from "../../build/contracts/AuctionFactory.json";
 import { AuctionFactory } from "../../contracts-typings/AuctionFactory";
 import Spacer from "../Base/Spacer";
+import useRefreshOnInterval from "../../utils/use-refresh-on-interval";
 
 const abi = AuctionFactoryABI.abi as any;
 const factoryContractAddress = AuctionFactoryABI.networks[Alfajores.chainId].address;
@@ -17,7 +18,7 @@ const AuctionGrid: React.FC = () => {
   const { kit } = useContractKit();
   const [auctions, setAuctions] = useState<string[]>([]);
   const [status, setStatus] = useState('idle')
-  const [refresh, setRefresh] = useState({ refresh: false });
+  const refresh = useRefreshOnInterval(5000);
 
   const auctionFactoryContract = useMemo(() => new kit.web3.eth.Contract(
       abi,
@@ -25,7 +26,6 @@ const AuctionGrid: React.FC = () => {
     ),
     [kit]) as unknown as AuctionFactory;
 
-  useInterval(() => setRefresh({ refresh: true }), 5000);
   useEffect(() => {
     const fetchAuctions = async () => {
       if (!kit) return;
