@@ -41,11 +41,3 @@
   padding: 10px 10px 20px 10px;
   width: 100%;
 }
-
-.auctionStatus {
-  white-space: nowrap;
-  display: block;
-  height: 100%;
-  color: rgb(112, 122, 131);
-  font-size: 14px;
-}

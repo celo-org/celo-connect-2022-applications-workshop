@@ -1,4 +1,4 @@
-import stylesCard from "./Info.module.css";
+import styles from "./AuctionCardInfo.module.css";
 
 import BigNumber from "bignumber.js";
 import { useContractKit } from "@celo-tools/use-contractkit";
@@ -51,10 +51,10 @@ const HighestBid = ({
     : `from ${getBidder(highestBidderAddress)}`;
 
   return (
-    <div className={stylesCard.bidOffer}>
-      <div className={stylesCard.bidTitle}>Highest offer</div>
-      <div className={stylesCard.bid}>{bidAmount}</div>
-      <div className={stylesCard.bidTitle}>{shortenedBidderAddress}</div>
+    <div className={styles.bidOffer}>
+      <div className={styles.bidTitle}>Highest offer</div>
+      <div className={styles.bid}>{bidAmount}</div>
+      <div className={styles.bidTitle}>{shortenedBidderAddress}</div>
     </div>
   );
 };

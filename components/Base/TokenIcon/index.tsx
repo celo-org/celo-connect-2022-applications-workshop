@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-import { memo } from "react";
 import { StableToken, Token } from "@celo/contractkit";
 import Image from "next/image";
 
