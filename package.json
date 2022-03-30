@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "fmt": "prettier --write '{pages,components}/**/*.{tsx,css}'",
+    "fmt:check": "prettier --check '{pages,components}/**/*.{tsx,css}'"
   },
   "dependencies": {
     "@celo-tools/use-contractkit": "^3.0.1",
@@ -29,6 +31,8 @@
     "@types/validator": "^13.7.1",
     "eslint": "8.11.0",
     "eslint-config-next": "12.1.0",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^2.6.1",
     "typescript": "4.6.2"
   }
 }
