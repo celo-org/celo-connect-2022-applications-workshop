@@ -20,9 +20,11 @@ const HighestBid = ({
       const highestBidderAddress = await auctionContract.methods
         .highestBidder()
         .call();
+
       const highestBid = await auctionContract.methods
         .highestBindingBid()
         .call();
+
       setHighestBidderAddress(highestBidderAddress);
       setHighestBid(highestBid);
     };

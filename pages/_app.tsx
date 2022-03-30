@@ -6,7 +6,7 @@ import type { AppProps } from "next/app";
 
 import Spacer from "../components/Base/Spacer";
 import Layout from "../components/Base/Layout";
-import Wallet from "../components/Wallet";
+import Wallet from "../components/Wallet/Wallet";
 
 function AppRoot({ Component, pageProps }: AppProps) {
   return (
