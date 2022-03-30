@@ -27,6 +27,7 @@ const AuctionCard = ({
 }) => {
   const [url, setUrl] = useState("");
   const [owner, setOwner] = useState("");
+  const [highestBidder, setHighestBidder] = useState("");
   const [canBid, setCanBid] = useState(true);
   const allowBid = useCallback((bool: boolean) => {
     setCanBid(bool);
@@ -42,17 +43,22 @@ const AuctionCard = ({
   useEffect(() => {
     const getAuctionData = async () => {
       const url = await auctionContract.methods.imgUrl().call();
+      const highestBidderAddress = await auctionContract.methods
+        .highestBidder()
+        .call();
       const owner = await auctionContract.methods.owner().call();
 
       setUrl(url);
       setOwner(owner);
+      setHighestBidder(highestBidderAddress);
     };
 
     getAuctionData();
   }, [auctionContract]);
 
   const isOwnerOfAuction = owner === walletAddress;
-
+  const isHighestBidder = highestBidder === walletAddress;
+  const bidButtonDisabled = isHighestBidder || !canBid;
   return (
     <div className={stylesCard.card}>
       <Img url={url} />
@@ -65,7 +71,10 @@ const AuctionCard = ({
           {isOwnerOfAuction ? (
             <OwnerActions auctionContract={auctionContract} />
           ) : (
-            <BidButton auctionContract={auctionContract} disabled={!canBid} />
+            <BidButton
+              auctionContract={auctionContract}
+              disabled={bidButtonDisabled}
+            />
           )}
         </div>
       </div>
