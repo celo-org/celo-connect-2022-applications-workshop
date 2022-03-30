@@ -2,7 +2,7 @@ import { useContractKit } from "@celo-tools/use-contractkit";
 import { StableToken } from "@celo/contractkit";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
-import { Balance } from "./Base/Balance";
+import { Balance } from "../Base/Balance";
 import styles from "./Wallet.module.css";
 
 const DEFAULT_BALANCE_SUMMARY = {
@@ -39,6 +39,7 @@ export default function Wallet() {
         kit.contracts.getStableToken(StableToken.cUSD),
         kit.contracts.getStableToken(StableToken.cEUR),
       ]);
+
       const [celo, cusd, ceur] = await Promise.all([
         goldToken.balanceOf(address),
         cUSD.balanceOf(address),
