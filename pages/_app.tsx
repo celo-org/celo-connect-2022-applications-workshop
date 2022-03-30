@@ -26,7 +26,6 @@ function AppRoot({ Component, pageProps }: AppProps) {
           and are displayed here */}
         <Component {...pageProps} />
       </Layout>
-
     </ContractKitProvider>
   );
 }

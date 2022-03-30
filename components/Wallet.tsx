@@ -12,8 +12,8 @@ const DEFAULT_BALANCE_SUMMARY = {
 };
 
 const normalizedBalance = (balance: BigNumber) => {
-  return balance.dividedBy(10 ** 18).toFixed(2)
-}
+  return balance.dividedBy(10 ** 18).toFixed(2);
+};
 
 export default function Wallet() {
   const { kit, address, network, destroy, connect } = useContractKit();
@@ -55,17 +55,20 @@ export default function Wallet() {
     fetchSummary();
   }, [kit]);
 
-
   return (
     <div className={styles.walletContainer}>
       {address ? (
         <>
           <div className={styles.summary}>
-            <p className={styles.networkTag}>{`Connected to ${network.name}`}</p>
+            <p
+              className={styles.networkTag}
+            >{`Connected to ${network.name}`}</p>
             <code>{`Address: ${address}`}</code>
             <Balance {...balanceSummary} />
           </div>
-          <button className={styles.disconnectWalletButton} onClick={destroy}>Disconnect wallet</button>
+          <button className={styles.disconnectWalletButton} onClick={destroy}>
+            Disconnect wallet
+          </button>
         </>
       ) : (
         <>

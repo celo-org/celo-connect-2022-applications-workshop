@@ -46,7 +46,8 @@
   color: var(--main-green);
 }
 
-.createAuctionButton:hover, .createAuctionButton:focus {
+.createAuctionButton:hover,
+.createAuctionButton:focus {
   background-color: var(--main-green);
   color: white;
 }

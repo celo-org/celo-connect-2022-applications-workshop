@@ -2,7 +2,14 @@ import BigNumber from "bignumber.js";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { Auction as AuctionContract } from "../../../contracts/typings/Auction";
 
-const BidButton = ({ auctionContract, refresh, ...props } : { auctionContract: AuctionContract, [x:string]: any }) => {
+const BidButton = ({
+  auctionContract,
+  refresh,
+  ...props
+}: {
+  auctionContract: AuctionContract;
+  [x: string]: any;
+}) => {
   const { performActions } = useContractKit();
 
   const bid = async () => {
@@ -32,7 +39,9 @@ const BidButton = ({ auctionContract, refresh, ...props } : { auctionContract: A
   };
 
   return (
-    <button onClick={bid} {...props}>Bid</button>
+    <button onClick={bid} {...props}>
+      Bid
+    </button>
   );
 };
 

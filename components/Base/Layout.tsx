@@ -56,6 +56,6 @@ const Layout: React.FC = ({ children }): React.ReactElement => {
       </div>
     </>
   );
-}
+};
 
 export default Layout;

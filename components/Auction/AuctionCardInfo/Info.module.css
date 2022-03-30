@@ -1,5 +1,5 @@
 .card {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   width: 400px;
   display: flex;
@@ -9,7 +9,6 @@
   align-items: center;
   overflow: hidden;
 }
-
 
 .bidOffer {
   display: block;

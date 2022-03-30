@@ -6,9 +6,17 @@ import { Auction as AuctionContract } from "../../../contracts/typings/Auction";
 import AuctionTimeLeft from "../../Base/AuctionTimeLeft";
 import { AuctionStatus } from "../AuctionCard";
 
-const TimeLeft = ({ auctionContract, allowBid } : { auctionContract: AuctionContract, allowBid: (value: boolean) => void }) => {
+const TimeLeft = ({
+  auctionContract,
+  allowBid,
+}: {
+  auctionContract: AuctionContract;
+  allowBid: (value: boolean) => void;
+}) => {
   const { kit } = useContractKit();
-  const [auctionStatus, setStatus] = useState<AuctionStatus>(AuctionStatus.ACTIVE);
+  const [auctionStatus, setStatus] = useState<AuctionStatus>(
+    AuctionStatus.ACTIVE
+  );
   const [timeLeft, setTimeLeft] = useState<number>(0);
 
   useEffect(() => {
@@ -31,14 +39,12 @@ const TimeLeft = ({ auctionContract, allowBid } : { auctionContract: AuctionCont
       const blockDiff = endBlock.minus(currentBlock);
       const secondsToEndBlock = blockDiff.multipliedBy(5).toNumber();
       setTimeLeft(secondsToEndBlock);
-    }
+    };
 
     getStatus();
-  }, [auctionContract, kit, allowBid])
+  }, [auctionContract, kit, allowBid]);
 
-  return (
-    <AuctionTimeLeft timeLeft={timeLeft} auctionStatus={auctionStatus} />
-  );
-}
+  return <AuctionTimeLeft timeLeft={timeLeft} auctionStatus={auctionStatus} />;
+};
 
 export default TimeLeft;
