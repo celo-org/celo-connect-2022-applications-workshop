@@ -39,6 +39,7 @@ export default function AuctionModal({
   const [bidTime, setBidTime] = useState(5);
   const [modalIsOpen, setIsOpen] = useState(false);
 
+  const [transactionId, setTransactionId] = useState("");
   const [creationStatus, setCreationStatus] = useState<AuctionCreationStatus>(
     AuctionCreationStatus.Idle
   );
@@ -52,6 +53,7 @@ export default function AuctionModal({
 
   const openModal = () => setIsOpen(true);
   const closeModal = () => {
+    setTransactionId("");
     setCreationStatus(AuctionCreationStatus.Idle);
     setIsOpen(false);
   };
@@ -61,7 +63,9 @@ export default function AuctionModal({
     try {
       const [transaction] = await createAuction(imageUrl, bidTime);
 
-      await transaction.getHash();
+      const txHash = await transaction.getHash();
+      setTransactionId(txHash);
+
       setCreationStatus(AuctionCreationStatus.TransactionApproved);
 
       await transaction.waitReceipt();
@@ -96,6 +100,13 @@ export default function AuctionModal({
     </>
   );
 
+  const transactionIdElement = (
+    <div className={styles.transactionId}>
+      Transaction ID
+      <br />
+      {transactionId}
+    </div>
+  );
   let modalContent = null;
   switch (creationStatus) {
     case AuctionCreationStatus.Pending:
@@ -113,6 +124,7 @@ export default function AuctionModal({
         <div className={styles.updateContainer}>
           <div className={styles.emoji}>❌</div>
           <div>Error processing transaction</div>
+          {transactionIdElement}
         </div>
       );
       break;
@@ -129,6 +141,7 @@ export default function AuctionModal({
           <div>
             Waiting for transaction to be processed in Celo blockchain...
           </div>
+          {transactionIdElement}
         </div>
       );
       break;
@@ -137,6 +150,7 @@ export default function AuctionModal({
         <div className={styles.updateContainer}>
           <div className={styles.emoji}>👏</div>
           <div>Auction created!</div>
+          {transactionIdElement}
         </div>
       );
       break;
@@ -161,10 +175,12 @@ export default function AuctionModal({
           <h2>Create auction</h2>
           {modalContent}
           <div className={styles.buttonSection}>
+            <button onClick={closeModal} className={styles.closeButton}>
+              Close
+            </button>
             <button onClick={onCreateClick} disabled={disabledButton}>
               Create auction
             </button>
-            <button onClick={closeModal}>close</button>
           </div>
         </div>
       </Modal>
