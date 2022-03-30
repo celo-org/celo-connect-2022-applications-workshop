@@ -126,7 +126,7 @@ Steps:
 [...]
 
 import AuctionFactoryABI from "../../contracts/build/AuctionFactory.json";
-import { AuctionFactory } from "../../contracts/typings//AuctionFactory";
+import { AuctionFactory } from "../../contracts/typings/AuctionFactory";
 
 const abi = AuctionFactoryABI.abi as any;
 const factoryContractAddress = AuctionFactoryABI.networks[Alfajores.chainId].address;
