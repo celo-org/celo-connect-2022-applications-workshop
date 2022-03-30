@@ -28,9 +28,14 @@ const CreateAuctionModal = ({
     return (await performActions(async (kit) => {
       if (!kit.defaultAccount) return;
 
+      const bidIncrement = 1; // baby bid
+      const auctionDurationInBlocks = Math.ceil(
+        (bidTime * MINUTE) / BLOCK_TIME
+      );
+
       const createActionTx = auctionFactoryContract.methods.createAuction(
-        1, // baby bid
-        Math.ceil((bidTime * MINUTE) / BLOCK_TIME),
+        bidIncrement,
+        auctionDurationInBlocks,
         imageUrl
       );
 
@@ -41,10 +46,7 @@ const CreateAuctionModal = ({
 
       const gas = await createActionTx.estimateGas(args);
 
-      const tx = await kit.sendTransaction({ ...args, gas });
-      const receipt = await tx.waitReceipt();
-
-      return receipt;
+      return await kit.sendTransaction({ ...args, gas });
     })) as TransactionResult[];
   };
 
