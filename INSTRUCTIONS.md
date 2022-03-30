@@ -11,7 +11,6 @@ We've prepared the skeleton for an Auction house using Next.js. Don't worry if y
 
 The app should allow you to see the auctions that exist, create an auction as well and place a bid. We've already created the smart contracts for it so you can focus on interacting with them using contract kit.
 
-
 ## Workshop Instruction
 
 ### 0. Clone the repo and get the app running
@@ -106,7 +105,7 @@ You'll get to try it soon, but first, you need to have a Celo compatible wallet!
 
 - Add funds to it using the faucet https://celo.org/developers/faucet
 
-- Test using the connect button to see if your address shows up!
+- Try out the connect button to see if your address and funds shows up!
 
 ### 4. Expose balance of different coins in the wallet
 
@@ -114,7 +113,7 @@ You'll get to try it soon, but first, you need to have a Celo compatible wallet!
 
 ### 5. Get list of auctions
 
-There are 2 contracts you'll need to interact with, the Auction Factory and the Auction (individual) one.
+There are 2 contracts you'll need to interact with, the Auction Factory and the individual Auction one.
 To get the list of current auctions, you'll need the Auction Factory.
 
 Steps:
@@ -205,7 +204,15 @@ export default AuctionGrid;
 
 ### 6. Allow user to create auction
 
+// TODO: Add instruction
+
+- Use performActions in use-contractkit
 - Import CreateAuctionModal to AuctionGrid
+
 ```
 <CreateAuctionModal auctionFactoryContract={auctionFactoryContract} />
 ```
+
+### 7. Allow user to bid on auction
+
+// TODO: Add instruction
