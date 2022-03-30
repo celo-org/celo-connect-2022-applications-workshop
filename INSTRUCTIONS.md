@@ -126,8 +126,8 @@ Steps:
 ```diff
 [...]
 
-import AuctionFactoryABI from "../../build/contracts/AuctionFactory.json";
-import { AuctionFactory } from "../../contracts-typings/AuctionFactory";
+import AuctionFactoryABI from "../../contracts/build/AuctionFactory.json";
+import { AuctionFactory } from "../../contracts/typings//AuctionFactory";
 
 const abi = AuctionFactoryABI.abi as any;
 const factoryContractAddress = AuctionFactoryABI.networks[Alfajores.chainId].address;

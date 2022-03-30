@@ -6,8 +6,8 @@ import useInterval from "../../utils/use-interval";
 import AuctionCard from "./AuctionCard";
 import CreateAuctionModal from "./CreateAuction";
 
-import AuctionFactoryABI from "../../build/contracts/AuctionFactory.json";
-import { AuctionFactory } from "../../contracts-typings/AuctionFactory";
+import AuctionFactoryABI from "../../contracts/build/AuctionFactory.json";
+import { AuctionFactory } from "../../contracts/typings//AuctionFactory";
 import Spacer from "../Base/Spacer";
 import useRefreshOnInterval from "../../utils/use-refresh-on-interval";
 

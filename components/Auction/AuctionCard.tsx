@@ -2,8 +2,8 @@ import stylesCard from "./AuctionCard.module.css"
 import { useContractKit, UseContractKit } from "@celo-tools/use-contractkit";
 import { useEffect, useState, useMemo, useCallback } from "react";
 
-import AuctionABI from "../../build/contracts/Auction.json";
-import { Auction as AuctionContract } from "../../contracts-typings/Auction";
+import AuctionABI from "../../contracts/build/Auction.json";
+import { Auction as AuctionContract } from "../../contracts/typings//Auction";
 import Img from "../Base/Image";
 import HighestBidInfo from "./Info/HighestBidInfo";
 import BidButton from "./Info/BidButton";
