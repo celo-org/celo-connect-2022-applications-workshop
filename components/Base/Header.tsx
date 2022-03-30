@@ -21,6 +21,13 @@ export default function Header() {
           <h2>Documentation</h2>
         </a>
         <a
+          href="https://alfajores-blockscout.celo-testnet.org/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <h2>Block Explorer</h2>
+        </a>
+        <a
           href="https://celo.org/developers/faucet"
           target="_blank"
           rel="noreferrer"
