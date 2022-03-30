@@ -1,14 +1,12 @@
-// CSS Styles Import
 import "../styles/globals.css";
 import "@celo-tools/use-contractkit/lib/styles.css";
+import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
 
-// Next specific
 import type { AppProps } from "next/app";
 
+import Spacer from "../components/Base/Spacer";
 import Layout from "../components/Base/Layout";
 import Wallet from "../components/Wallet";
-import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
-import Spacer from "../components/Base/Spacer";
 
 function AppRoot({ Component, pageProps }: AppProps) {
   return (
@@ -24,7 +22,8 @@ function AppRoot({ Component, pageProps }: AppProps) {
       <Layout>
         <Wallet />
         <Spacer axis="vertical" size={32} />
-        {/* In next, all the pages your create within `/pages` will be displayed here */}
+        {/* In next, all the pages created within `/pages` can be accessed by its name
+          and are displayed here */}
         <Component {...pageProps} />
       </Layout>
 
