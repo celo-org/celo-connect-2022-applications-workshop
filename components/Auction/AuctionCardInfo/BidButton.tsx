@@ -4,11 +4,10 @@ import { Auction as AuctionContract } from "../../../contracts/typings/Auction";
 
 const BidButton = ({
   auctionContract,
-  refresh,
-  ...props
+  disabled,
 }: {
   auctionContract: AuctionContract;
-  [x: string]: any;
+  disabled: boolean;
 }) => {
   const { performActions } = useContractKit();
 
@@ -39,7 +38,7 @@ const BidButton = ({
   };
 
   return (
-    <button onClick={bid} {...props}>
+    <button onClick={bid} disabled={disabled}>
       Bid
     </button>
   );
