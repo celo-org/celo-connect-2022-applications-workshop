@@ -5,10 +5,10 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import AuctionABI from "../../contracts/build/Auction.json";
 import { Auction as AuctionContract } from "../../contracts/typings//Auction";
 import Img from "../Base/Image";
-import HighestBidInfo from "./Info/HighestBidInfo";
-import BidButton from "./Info/BidButton";
-import TimeLeft from "./Info/TimeLeft";
-import OwnerActions from "./Info/OwnerActionButtons";
+import HighestBidInfo from "./AuctionCardInfo/HighestBidInfo";
+import BidButton from "./AuctionCardInfo/BidButton";
+import TimeLeft from "./AuctionCardInfo/TimeLeft";
+import OwnerActions from "./AuctionCardInfo/OwnerActionButtons";
 
 const getContract = (kit: UseContractKit['kit'], abi: any, address: string) => {
   return new kit.web3.eth.Contract(

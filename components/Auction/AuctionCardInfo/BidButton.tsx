@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { useContractKit } from "@celo-tools/use-contractkit";
-import { Auction as AuctionContract } from "../../../contracts/typings//Auction";
+import { Auction as AuctionContract } from "../../../contracts/typings/Auction";
 
 const BidButton = ({ auctionContract, refresh, ...props } : { auctionContract: AuctionContract, [x:string]: any }) => {
   const { performActions } = useContractKit();

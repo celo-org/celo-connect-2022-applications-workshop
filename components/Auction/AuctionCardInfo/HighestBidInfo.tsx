@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { useEffect, useState } from "react";
 
-import { Auction as AuctionContract } from "../../../contracts/typings//Auction";
+import { Auction as AuctionContract } from "../../../contracts/typings/Auction";
 
 const HighestBidInfo = ({ auctionContract } : { auctionContract: AuctionContract }) => {
   const { address: walletAddress } = useContractKit();

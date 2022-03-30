@@ -1,4 +1,4 @@
-import { Auction as AuctionContract } from "../../../contracts/typings//Auction";
+import { Auction as AuctionContract } from "../../../contracts/typings/Auction";
 
 const OwnerActions = ({ auctionContract } : { auctionContract: AuctionContract }) => {
   /** TODO: Implement */
