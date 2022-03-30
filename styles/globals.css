@@ -15,6 +15,12 @@ a {
   box-sizing: border-box;
 }
 
+:root {
+  --main-green: rgb(26, 183, 117);;
+  --light-green: rgb(53, 208, 127);
+  --red: rgb(251 124 109);
+}
+
 button {
   box-sizing: border-box;
   cursor: pointer;
@@ -22,15 +28,16 @@ button {
   line-height: normal;
   user-select: none;
   vertical-align: middle;
-  background-color: #26b45c;
+  background-color: var(--main-green);
   border: transparent;
-  border-radius: 4px;
-  color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  color: white;
   font-size: 100%;
   padding: 0.5em 1em;
   text-decoration: none;
-  width: 100%;
+  box-shadow: (40 54 61 / 18%) 1px 2px 10px;
 }
+
 button:hover,
 button:focus {
   background-image: linear-gradient(

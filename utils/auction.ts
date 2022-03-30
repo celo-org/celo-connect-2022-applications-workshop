@@ -1,7 +1,7 @@
 import { ContractKit } from "@celo/contractkit";
 import BigNumber from "bignumber.js";
-import AuctionABI from "../build/contracts/Auction.json";
-import { Auction as AuctionContract } from "../contracts-typings/Auction";
+import AuctionABI from "../contracts/build/Auction.json";
+import { Auction as AuctionContract } from "../contracts/typings/Auction";
 
 export type AuctionData = {
   address: string;

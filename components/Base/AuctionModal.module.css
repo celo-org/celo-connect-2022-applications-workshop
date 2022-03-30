@@ -1,0 +1,98 @@
+.container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 3rem;
+  min-height: 700px;
+  width: 500px;
+  justify-content: space-between;
+}
+
+.modalBody > * {
+  padding-bottom: 1rem;
+}
+.inputSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputSection input {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.buttonSection {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.closeButton {
+  background-color: white;
+  border: 1px solid black;
+  color: black;
+}
+
+.createAuctionButton {
+  border: 2px solid var(--main-green);
+  background-color: white;
+  color: var(--main-green);
+}
+
+.createAuctionButton:hover,
+.createAuctionButton:focus {
+  background-color: var(--main-green);
+  color: white;
+}
+
+.createAuctionButton:focus {
+  border: 2px solid var(--light-green);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.spinner {
+  animation: spin 1000ms;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.updateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.emoji {
+  font-size: 40px;
+}
+
+.transactionId {
+  line-break: anywhere;
+  font-size: 12px;
+  color: gray;
+  margin-top: 20px;
+}
