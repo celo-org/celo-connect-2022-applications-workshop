@@ -20,7 +20,7 @@ export const Balance = ({
     <div className={styles.balances}>
       <div className={styles.token}>
         <TokenIcon tokenType={Token.CELO} />
-        <span>{normalizedBalance(celo)}</span>
+        {normalizedBalance(celo)}
       </div>
       <div className={styles.token}>
         <TokenIcon tokenType={StableToken.cEUR} />

@@ -11,28 +11,20 @@ const DEFAULT_BALANCE_SUMMARY = {
   ceur: new BigNumber(0),
 };
 
-const normalizedBalance = (balance: BigNumber) => {
-  return balance.dividedBy(10 ** 18).toFixed(2);
-};
-
 export default function Wallet() {
   const { kit, address, network, destroy, connect } = useContractKit();
   const [balanceSummary, setBalanceSummary] = useState(DEFAULT_BALANCE_SUMMARY);
+  // Small workaround for next.js to not complain about a missing div from server rendering.
+  const [walletAddress, setWalletAddress] = useState("");
 
   useEffect(() => {
+    if (address) {
+      setWalletAddress(address);
+    }
+
     const fetchSummary = async () => {
       const address = kit.defaultAccount;
       if (!address) return;
-
-      // There could be 2 separate steps in the workshop for the wallet part.
-      // 1st is to check whether there's an address connected
-      // and use the `connect` plus `address` that gets returned
-      // from `useContractKit`.This will be literally a couple of lines.
-      // It seemde that the summary from the accounts.getAccountSummary did
-      // not give anything that `useContractKit` doesn't.
-      // IMO it felt more powerful the fact that I don't have to do anything
-      // other than use "connect" to get the address.
-      // The 2nd step would be to then get the balance.
 
       const [goldToken, cUSD, cEUR] = await Promise.all([
         kit.contracts.getGoldToken(),
@@ -54,16 +46,16 @@ export default function Wallet() {
     };
 
     fetchSummary();
-  }, [kit]);
+  }, [kit, address]);
 
   return (
     <div className={styles.walletContainer}>
-      {address ? (
+      {walletAddress ? (
         <>
           <div className={styles.summary}>
-            <p
-              className={styles.networkTag}
-            >{`Connected to ${network.name}`}</p>
+            <p className={styles.networkTag}>
+              {`Connected to ${network.name}`}
+            </p>
             <code>{`Address: ${address}`}</code>
             <Balance {...balanceSummary} />
           </div>
@@ -72,9 +64,7 @@ export default function Wallet() {
           </button>
         </>
       ) : (
-        <>
-          <button onClick={connect}>Connect wallet</button>
-        </>
+        <button onClick={connect}>Connect wallet</button>
       )}
     </div>
   );
