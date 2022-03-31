@@ -22,32 +22,8 @@ const CreateAuctionModal = ({
 }: {
   auctionFactoryContract: AuctionFactory;
 }) => {
-  const { performActions } = useContractKit();
-
   const createAuction = async (imageUrl: string, bidTime = 5) => {
-    return (await performActions(async (kit) => {
-      if (!kit.defaultAccount) return;
-
-      const bidIncrement = 1; // baby bid
-      const auctionDurationInBlocks = Math.ceil(
-        (bidTime * MINUTE) / BLOCK_TIME
-      );
-
-      const createActionTx = auctionFactoryContract.methods.createAuction(
-        bidIncrement,
-        auctionDurationInBlocks,
-        imageUrl
-      );
-
-      const args = {
-        from: kit.defaultAccount,
-        data: createActionTx.encodeABI(),
-      };
-
-      const gas = await createActionTx.estimateGas(args);
-
-      return await kit.sendTransaction({ ...args, gas });
-    })) as TransactionResult[];
+    throw new Error('Unimplemented')
   };
 
   return <AuctionModal createAuction={createAuction} />;

@@ -16,25 +16,16 @@ const factoryContractAddress =
   AuctionFactoryABI.networks[Alfajores.chainId].address;
 
 const AuctionGrid: React.FC = () => {
-  const { kit } = useContractKit();
+  const kit = null;
   const [auctions, setAuctions] = useState<string[]>([]);
   const [status, setStatus] = useState("idle");
   const refresh = useRefreshOnInterval(5000);
 
-  const auctionFactoryContract = useMemo(
-    () => new kit.web3.eth.Contract(abi, factoryContractAddress),
-    [kit]
-  ) as unknown as AuctionFactory;
+  const auctionFactoryContract = null;
 
   useEffect(() => {
     const fetchAuctions = async () => {
-      if (!kit) return;
 
-      // Get all existing auctions with the method from the address
-      const allAuctionAdresses = await auctionFactoryContract.methods
-        .allAuctions()
-        .call();
-      setAuctions(allAuctionAdresses);
     };
 
     setStatus("loading");
@@ -45,7 +36,7 @@ const AuctionGrid: React.FC = () => {
 
   // In the empty version of the app, we could show this
   // const isAccountConnected = false;
-  const isAccountConnected = kit && kit.defaultAccount;
+  const isAccountConnected = false;
 
   if (!isAccountConnected) {
     return (

@@ -7,30 +7,13 @@ import { useEffect, useState } from "react";
 import { Auction as AuctionContract } from "../../../contracts/typings/Auction";
 
 const HighestBid = ({
-  auctionContract,
+  highestBidderAddress = "",
+  highestBid = "",
 }: {
-  auctionContract: AuctionContract;
+  highestBidderAddress: string;
+  highestBid: string;
 }) => {
   const { address: walletAddress } = useContractKit();
-  const [highestBidderAddress, setHighestBidderAddress] = useState<string>("");
-  const [highestBid, setHighestBid] = useState<string>("");
-
-  useEffect(() => {
-    const getBidInfo = async () => {
-      const highestBidderAddress = await auctionContract.methods
-        .highestBidder()
-        .call();
-
-      const highestBid = await auctionContract.methods
-        .highestBindingBid()
-        .call();
-
-      setHighestBidderAddress(highestBidderAddress);
-      setHighestBid(highestBid);
-    };
-
-    getBidInfo();
-  }, [auctionContract]);
 
   const noBidder = new BigNumber(highestBidderAddress).eq(0);
   const bidAmount = noBidder ? "NO BID" : `${highestBid} CELO`;

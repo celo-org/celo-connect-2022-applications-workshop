@@ -1,4 +1,3 @@
-import { useContractKit } from "@celo-tools/use-contractkit";
 import { StableToken } from "@celo/contractkit";
 import BigNumber from "bignumber.js";
 import { useEffect, useState } from "react";
@@ -12,7 +11,11 @@ const DEFAULT_BALANCE_SUMMARY = {
 };
 
 export default function Wallet() {
-  const { kit, address, network, destroy, connect } = useContractKit();
+  const address = false;
+  const network = { name:'placeholder'};
+  const destroy = () => {};
+  const connect = () => {};
+  const kit = null;
   const [balanceSummary, setBalanceSummary] = useState(DEFAULT_BALANCE_SUMMARY);
   // Small workaround for next.js to not complain about a missing div from server rendering.
   const [walletAddress, setWalletAddress] = useState("");
@@ -23,7 +26,6 @@ export default function Wallet() {
     }
 
     const fetchSummary = async () => {
-      const address = kit.defaultAccount;
       if (!address) return;
 
       const [goldToken, cUSD, cEUR] = await Promise.all([
