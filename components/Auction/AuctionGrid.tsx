@@ -6,7 +6,7 @@ import AuctionCard from "./AuctionCard";
 import CreateAuctionModal from "./CreateAuction";
 
 import AuctionFactoryABI from "../../contracts/build/AuctionFactory.json";
-import { AuctionFactory } from "../../contracts/typings/AuctionFactory";
+import { AuctionFactory } from "../../contracts/typings//AuctionFactory";
 import Spacer from "../Base/Spacer";
 import useRefreshOnInterval from "../../utils/use-refresh-on-interval";
 
@@ -15,16 +15,25 @@ const factoryContractAddress =
   AuctionFactoryABI.networks[Alfajores.chainId].address;
 
 const AuctionGrid: React.FC = () => {
-  const kit = null;
+  const { kit } = useContractKit();
   const [auctions, setAuctions] = useState<string[]>([]);
   const [status, setStatus] = useState("idle");
   const refresh = useRefreshOnInterval(5000);
 
-  const auctionFactoryContract = null;
+  const auctionFactoryContract = useMemo(
+    () => new kit.web3.eth.Contract(abi, factoryContractAddress),
+    [kit]
+  ) as unknown as AuctionFactory;
 
   useEffect(() => {
     const fetchAuctions = async () => {
-      // TODO: Add logic to fetch auctions
+      if (!kit) return;
+
+      // Get all existing auctions with the method from the address
+      const allAuctionAdresses = await auctionFactoryContract.methods
+        .allAuctions()
+        .call();
+      setAuctions(allAuctionAdresses);
     };
 
     setStatus("loading");
@@ -33,7 +42,7 @@ const AuctionGrid: React.FC = () => {
       .catch(() => setStatus("error"));
   }, [kit, auctionFactoryContract, refresh]);
 
-  const isAccountConnected = false;
+  const isAccountConnected = kit && kit.defaultAccount;
 
   if (!isAccountConnected) {
     return (

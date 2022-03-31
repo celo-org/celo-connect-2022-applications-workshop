@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import "@celo-tools/use-contractkit/lib/styles.css";
+import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
 
 import type { AppProps } from "next/app";
 
@@ -9,6 +10,15 @@ import Wallet from "../components/Wallet/Wallet";
 
 function AppRoot({ Component, pageProps }: AppProps) {
   return (
+    <ContractKitProvider
+      dapp={{
+        name: "Celo Connect Dapp",
+        description: "My first dapp",
+        url: "https://celoconnect.com/",
+        icon: "https://celoconnect.com/wp-content/uploads/2022/02/cc-full-final.svg",
+      }}
+      network={Alfajores}
+    >
       <Layout>
         <Wallet />
         <Spacer axis="vertical" size={32} />
@@ -16,6 +26,7 @@ function AppRoot({ Component, pageProps }: AppProps) {
           and are displayed here */}
         <Component {...pageProps} />
       </Layout>
+    </ContractKitProvider>
   );
 }
 

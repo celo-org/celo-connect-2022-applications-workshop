@@ -43,7 +43,20 @@ const AuctionCard = ({
 
   useEffect(() => {
     const getAuctionData = async () => {
-      // Unimplemented
+      const [url, highestBidderAddress, highestBindingBid, owner] =
+        await Promise.all(
+          [
+            auctionContract.methods.imgUrl(),
+            auctionContract.methods.highestBindingBid(),
+            auctionContract.methods.highestBindingBid(),
+            auctionContract.methods.owner(),
+          ].map((x) => x.call())
+        );
+
+      setUrl(url);
+      setOwner(owner);
+      setHighestBidder(highestBidderAddress);
+      setHighestBid(highestBindingBid);
     };
 
     getAuctionData();
