@@ -1,0 +1,19 @@
+{
+  "name": "celo-connect-2022-applications-workshop-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "compile": "truffle compile",
+    "postcompile": "node ./scripts/export_types.js",
+    "migrate": "yarn compile && truffle migrate --network alfajores",
+    "migrate:reset": "yarn compile && truffle migrate --network alfajores --reset"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@celo/contractkit": "^1.5.2",
+    "@typechain/web3-v1": "^5.0.0",
+    "truffle": "^5.5.6",
+    "typechain": "^7.0.1",
+    "web3": "^1.7.1"
+  }
+}

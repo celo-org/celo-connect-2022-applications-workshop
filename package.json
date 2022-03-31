@@ -1,0 +1,38 @@
+{
+  "name": "celo-connect-2022-applications-workshop",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "fmt": "prettier --write '{pages,components}/**/*.{tsx,css}'",
+    "fmt:check": "prettier --check '{pages,components}/**/*.{tsx,css}'"
+  },
+  "dependencies": {
+    "@celo-tools/use-contractkit": "^3.0.1",
+    "@celo/contractkit": "^1.5.2",
+    "bignumber.js": "^9.0.2",
+    "date-fns": "^2.28.0",
+    "dotenv": "^16.0.0",
+    "next": "12.1.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-gesture-responder": "^2.1.0",
+    "react-image-enlarger": "^1.1.0",
+    "react-modal": "^3.14.4",
+    "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.21",
+    "@types/react": "17.0.40",
+    "@types/react-modal": "^3.13.1",
+    "@types/validator": "^13.7.1",
+    "eslint": "8.11.0",
+    "eslint-config-next": "12.1.0",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^2.6.1",
+    "typescript": "4.6.2"
+  }
+}

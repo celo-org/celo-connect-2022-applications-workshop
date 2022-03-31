@@ -1,0 +1,12 @@
+.balances {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.token {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
