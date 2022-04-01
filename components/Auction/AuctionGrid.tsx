@@ -2,7 +2,6 @@ import styles from "./AuctionGrid.module.css";
 import { useContractKit, Alfajores } from "@celo-tools/use-contractkit";
 import { useEffect, useMemo, useState } from "react";
 
-import useInterval from "../../utils/use-interval";
 import AuctionCard from "./AuctionCard";
 import CreateAuctionModal from "./CreateAuction";
 
