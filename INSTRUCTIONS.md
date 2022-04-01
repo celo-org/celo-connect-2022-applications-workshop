@@ -26,11 +26,38 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### 1. Add the Contract Kit Provider
 
-````
+Go to `pages/_app.tsx` where you will add the `ContractKitProvider`.
 
-Go to `pages/_app.tsx` and add the ContractKitProvider.
-`_app.tsx` is the entry point for Next.js apps
-You'll need to import the `use-contractkit` and then add the `ContractKitProvider` to the root of the app.
+Note: `_app.tsx` is the entry point for Next.js apps.
+
+Steps:
+
+- Import the `ContractKitProvider` using `use-contractkit`
+
+```js
+import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
+```
+
+- Add the `ContractKitProvider` to the root of the app
+
+```js
+<ContractKitProvider
+  dapp={{
+    name: "Celo Connect Dapp",
+    description: "My first dapp",
+    url: "https://celoconnect.com/",
+    icon: "https://celoconnect.com/wp-content/uploads/2022/02/cc-full-final.svg",
+  }}
+  network={Alfajores}
+>
+  // Existing AppRoot code
+</ContractKitProvider>
+```
+
+---
+
+<details>
+<summary>See expected diff from changes</summary>
 
 ```diff
 + import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
@@ -47,43 +74,90 @@ function AppRoot({ Component, pageProps }: AppProps) {
 +      network={Alfajores}
 +    >
       <Layout>
-        {/* In next, all the pages your create end up here? */}
+        <Wallet />
+        <Spacer axis="vertical" size={32} />
+        {/* In next, all the pages created within `/pages` can be accessed by its name
+          and are displayed here */}
         <Component {...pageProps} />
       </Layout>
 +    </ContractKitProvider>
   );
 }
-````
+```
 
-### 2. Connect to wallet and show address
+</details>
 
-Now that you have wrapped your app with the `ContractKitProvider`, you can easily connect to a wallet and show the address/network using the `useContractKit` hook. This will be done in `Wallet` component.
+---
 
-You need to head over to `components/Wallet.tsx` and do the following simple steps:
+### 2. Add connect to wallet logic
+
+Now that you have wrapped the app with the `ContractKitProvider`, you can easily connect to a wallet and show the address/network using the `useContractKit` hook. This will be done in `Wallet` component so head over to `components/Wallet.tsx`.
+
+Now follow the steps:
 
 - Import the `useContractKit` hook using `@celo-tools/use-contractkit`
-- Substitute the placeholder values for the values returned by the hook!
+
+```js
+import { useContractKit } from "@celo-tools/use-contractkit";
+```
+
+- Substitute the placeholder values for the values returned by the hook. The helper functions of `connect` and `destroy` are already used in the buttons to connect and disconnect from the wallet.
+
+```js
+const { kit, address, network, destroy, connect } = useContractKit();
+```
+
+- Add the logic below to the `fetchSummary()` func to get the balance summary of the different coins supported by Celo.
+
+> Note how the kit has access to the coins contracts without the need for any extra configuration.
+
+```js
+if (!address) return;
+
+const [goldToken, cUSD, cEUR] = await Promise.all([
+  kit.contracts.getGoldToken(),
+  kit.contracts.getStableToken(StableToken.cUSD),
+  kit.contracts.getStableToken(StableToken.cEUR),
+]);
+
+const [celo, cusd, ceur] = await Promise.all([
+  goldToken.balanceOf(address),
+  cUSD.balanceOf(address),
+  cEUR.balanceOf(address),
+]);
+
+setBalanceSummary({
+  celo,
+  cusd,
+  ceur,
+});
+```
+
+---
+
+<details>
+
+<summary>See expected diff from changes</summary>
 
 ```diff
 +import { useContractKit } from "@celo-tools/use-contractkit";
-import styles from "./Header.module.css";
 
-export default function Wallet() {
+[...]
+ export default function Wallet() {
 -  const address = false;
--  const network = { name:'placeholder'};
+-  const network = { name: "placeholder" };
 -  const destroy = () => {};
 -  const connect = () => {};
 -  const kit = null;
 +  const { kit, address, network, destroy, connect } = useContractKit();
+   const [balanceSummary, setBalanceSummary] = useState(DEFAULT_BALANCE_SUMMARY);
+   // Small workaround for next.js to not complain about a missing div from server rendering.
+   const [walletAddress, setWalletAddress] = useState<string | null>("");
 
-  const [walletAddress, setWalletAddress] = useState("");
+   export default function Wallet() {
+     setWalletAddress(address);
 
-  useEffect(() => {
-    if (address) {
-      setWalletAddress(address);
-    }
-
-    const fetchSummary = async () => {
+     const fetchSummary = async () => {
 -      // Unimplemented
 +      if (!address) return;
 +
@@ -104,35 +178,21 @@ export default function Wallet() {
 +        cusd,
 +        ceur,
 +      });
-    };
+     };
 
-    fetchSummary();
-  }, [kit, address]);
-  return (
-    <div className="container">
-      {address ? (
-        <>
-          <div className={styles.summary}>
-            <code>{`Network: ${network.name} | Address: ${address}`}</code>
-          </div>
-          <button onClick={destroy}>Disconnect wallet</button>
-        </>
-      ) : (
-        <>
-          <button onClick={connect}>Connect wallet</button>
-        </>
-      )}
-    </div>
-  );
-}
-
+     fetchSummary();
+[...]
 ```
 
-And that's it! That's all you need to connect to a wallet.
+</details>
+
+---
+
+And that's it - that's all you need to connect to a wallet.
 
 `useContractKit` takes care of everything for you, including displaying the modal with the wallet option for the user to choose from!
 
-You'll get to try it soon, but first, you need to have a Celo compatible wallet!
+You'll get to try it soon, but first, you need to have a Celo compatible wallet with funds.
 
 ### 3. Fund your Metamask wallet with Celo so you can interact with the Auction House properly
 
@@ -169,14 +229,61 @@ Block Explorer URL (Optional): https://alfajores-blockscout.celo-testnet.org
 
 ### 6. Get the list of auctions
 
-There are 2 contracts you'll need to interact with, the Auction Factory and the individual Auction one.
-To get the list of current auctions, you'll need the Auction Factory.
+Now that you have connected your wallet, let's move on to actually working on the Auction.
 
-Steps:
+There are 2 contracts you'll need to interact with: the Auction Factory (which is responsible for creating an `Auction`) and the individual Auction one.
 
-- Initialize the Auction Factory contract
-- Use the `allAuctions()` method to get the existing auctions
-- Check if there is a wallet connected by using Kit
+To retrieve the list of existing auctions, you'll need to use the Auction Factory in the `AuctionGrid` component (found in `components/Auction/AuctionGrid.tsx`).
+
+For that, follow the steps:
+
+- Initialize the Auction Factory contract:
+
+  - Replace `const kit` with the `useContractKit` hook
+
+    ```js
+    const { kit } = useContractKit();
+    ```
+
+  - Get and assign the `AuctionFactory` contract to `const auctionFactoryContract` using `web3`
+
+    ```js
+      const auctionFactoryContract = useMemo(
+      () => new kit.web3.eth.Contract(abi, factoryContractAddress),
+      [kit]
+    ) as unknown as AuctionFactory;
+    ```
+
+    > Note 1: We suggest using `useMemo` because (1) `auctionFactoryContract` is used in the `useEffect` dependency array of a child component and (2) we are refetching the list every 5 seconds.
+
+    ***
+
+    > Note 2: To make this and the next step easier, we've already imported the Contract ABI (`AuctionFactoryABI`) and its typings (`AuctionFactory`), which includes the methods that the contract has.
+
+- Once the contract has been initialised, you can use its `allAuctions()` method to get the existing auctions
+
+```js
+if (!kit) return;
+
+// Get all existing auctions with the method from the address
+const allAuctionAdresses = await auctionFactoryContract.methods
+  .allAuctions()
+  .call();
+
+setAuctions(allAuctionAdresses);
+```
+
+- Finally, use `kit` to check if there is a wallet connected before showing auctions
+
+```js
+const isAccountConnected = kit && kit.defaultAccount;
+```
+
+---
+
+<details>
+
+<summary>See expected diff from changes</summary>
 
 ```diff
 [...]
@@ -230,33 +337,15 @@ const AuctionGrid: React.FC = () => {
     );
   }
 
-  if (status === 'loaded' && auctions.length === 0) {
-    return (
-      <div>
-        <p>
-          No auctions yet.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <>
-    <CreateAuctionModal auctionFactoryContract={auctionFactoryContract} />
-    <div className={styles.main}>
-      {auctions.map((auctionAddress) => {
-        return (
-          <AuctionCard auctionContractAddress={auctionAddress} key={auctionAddress} />
-        )
-      })}
-    </div>
-    </>
-
-  )
+  [...]
 };
 
 export default AuctionGrid;
 ```
+
+</details>
+
+---
 
 ### 7. Allow users to create an auction
 
