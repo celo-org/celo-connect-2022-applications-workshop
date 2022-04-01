@@ -34,13 +34,13 @@ Steps:
 
 - Import the `ContractKitProvider` using `use-contractkit`
 
-```js
+```ts
 import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
 ```
 
 - Add the `ContractKitProvider` to the root of the app
 
-```js
+```ts
 <ContractKitProvider
   dapp={{
     name: "Celo Connect Dapp",
@@ -97,13 +97,13 @@ Now follow the steps:
 
 - Import the `useContractKit` hook using `@celo-tools/use-contractkit`
 
-```js
+```ts
 import { useContractKit } from "@celo-tools/use-contractkit";
 ```
 
 - Substitute the placeholder values for the values returned by the hook. The helper functions of `connect` and `destroy` are already used in the buttons to connect and disconnect from the wallet.
 
-```js
+```ts
 const { kit, address, network, destroy, connect } = useContractKit();
 ```
 
@@ -111,7 +111,7 @@ const { kit, address, network, destroy, connect } = useContractKit();
 
 > Note how the kit has access to the coins contracts without the need for any extra configuration.
 
-```js
+```ts
 if (!address) return;
 
 const [goldToken, cUSD, cEUR] = await Promise.all([
@@ -241,14 +241,14 @@ For that, follow the steps:
 
   - Replace `const kit` with the `useContractKit` hook
 
-    ```js
+    ```ts
     const { kit } = useContractKit();
     ```
 
   - Get and assign the `AuctionFactory` contract to `const auctionFactoryContract` using `web3`
 
-    ```js
-      const auctionFactoryContract = useMemo(
+    ```ts
+    const auctionFactoryContract = useMemo(
       () => new kit.web3.eth.Contract(abi, factoryContractAddress),
       [kit]
     ) as unknown as AuctionFactory;
@@ -262,7 +262,7 @@ For that, follow the steps:
 
 - Once the contract has been initialised, you can use its `allAuctions()` method to get the existing auctions
 
-```js
+```ts
 if (!kit) return;
 
 // Get all existing auctions with the method from the address
@@ -275,7 +275,7 @@ setAuctions(allAuctionAdresses);
 
 - Finally, use `kit` to check if there is a wallet connected before showing auctions
 
-```js
+```ts
 const isAccountConnected = kit && kit.defaultAccount;
 ```
 
@@ -359,6 +359,39 @@ Steps:
 - Use the `auctionFactoryContract` to interact with the contract
 - Use the `createAuction` method
 
+```ts
+const { performActions } = useContractKit();
+const createAuction = async (imageUrl: string, bidTime = 5) => {
+  return (await performActions(async (kit) => {
+    if (!kit.defaultAccount) return;
+
+    const bidIncrement = 1; // baby bid
+    const auctionDurationInBlocks = Math.ceil((bidTime * MINUTE) / BLOCK_TIME);
+
+    const createActionTx = auctionFactoryContract.methods.createAuction(
+      bidIncrement,
+      auctionDurationInBlocks,
+      imageUrl
+    );
+
+    const args = {
+      from: kit.defaultAccount,
+      data: createActionTx.encodeABI(),
+    };
+
+    const gas = await createActionTx.estimateGas(args);
+
+    return await kit.sendTransaction({ ...args, gas });
+  })) as TransactionResult[];
+};
+```
+
+---
+
+<details>
+
+<summary>See expected diff from changes</summary>
+
 ```diff
 const CreateAuctionModal = ({
   auctionFactoryContract,
@@ -398,8 +431,11 @@ const CreateAuctionModal = ({
 };
 
 export default CreateAuctionModal;
-
 ```
+
+</details>
+
+---
 
 ### 8. Show information about each auction
 
@@ -440,6 +476,40 @@ The file in question is located at `components/Auction/AuctionCardInfo/BidButton
 - As before you'll need the `Auction` contract, fortunately, we have already provided it in the props
 - Then use the `useContractKit` hook to be able to perform actions, such as signing a transaction.
 - Use the `performActions` methods to wrap the contract's method `bidIncrement`
+
+```ts
+const { performActions } = useContractKit();
+
+const bid = async () => {
+  await performActions(async (kit) => {
+    if (!kit.defaultAccount) return;
+
+    const bid = auctionContract.methods.placeBid();
+    const currentBid = await auctionContract.methods.highestBindingBid().call();
+    const increment = new BigNumber(
+      await auctionContract.methods.bidIncrement().call()
+    );
+
+    const args = {
+      from: kit.defaultAccount,
+      data: bid.encodeABI(),
+      value: new BigNumber(currentBid).plus(increment).toString(),
+    };
+    const gas = await bid.estimateGas(args);
+
+    const transactionResult = await kit.sendTransaction({ ...args, gas });
+
+    await transactionResult.getHash();
+    await transactionResult.waitReceipt();
+  });
+};
+```
+
+---
+
+<details>
+
+<summary>See expected diff from changes</summary>
 
 ```diff
 const BidButton = ({
@@ -487,6 +557,10 @@ const BidButton = ({
 
 export default BidButton;
 ```
+
+</details>
+
+---
 
 ### 10. Build more!
 
