@@ -1,15 +1,15 @@
-# Workshop: Interacting with the Celo Blockchain using our Contract Kit
+# Workshop: Interacting with the Celo Blockchain using Contract Kit
 
 At cLabs, we've developed 2 packages to make it easier to interact with contracts in the Celo Blockchain.
 
 - `@celo/contractkit`: ContractKit is a library to help interact with the Celo blockchain and to integrate Celo Smart Contracts within their applications.
-- `@celo-tools/use-contractkit`: a React hook for managing access to ContractKit with a built-in modal system for connecting to verious wallets
+- `@celo-tools/use-contractkit`: a React hook for managing access to ContractKit with a built-in modal system for connecting to various wallets.
 
 ## What we'll work on
 
-We've prepared the skeleton for an Auction house using Next.js. Don't worry if you're not familiar with it. We've tried to extract away everything that was next specific so you can focus on learning contract kit!
+We've prepared the skeleton for an Auction house using Next.js. Don't worry if you're not familiar with it. We've tried to extract away everything that was Next specific so you can focus on learning Contract Kit!
 
-The app should allow you to see the auctions that exist, create an auction as well and place a bid. We've already created the smart contracts for it so you can focus on interacting with them using contract kit.
+The app should allow you to see the auctions that exist, create an auction as well as place a bid. We've already created the smart contracts for it so you can focus on interacting with them using Contract Kit.
 
 ## Workshop Instruction
 
@@ -19,15 +19,14 @@ The app should allow you to see the auctions that exist, create an auction as we
 git clone git@github.com:celo-org/celo-connect-2022-applications-workshop.git
 cd celo-connect-2022-applications-workshop
 yarn
+yarn dev
 ```
 
-### 1. Add the contract kit provider
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- Install the dependencies
+### 1. Add the Contract Kit Provider
 
-```sh
-  yarn add @celo-tools/use-contractkit @celo/contractkit
-```
+````
 
 Go to `pages/_app.tsx` and add the ContractKitProvider.
 `_app.tsx` is the entry point for Next.js apps
@@ -54,11 +53,11 @@ function AppRoot({ Component, pageProps }: AppProps) {
 +    </ContractKitProvider>
   );
 }
-```
+````
 
 ### 2. Connect to wallet and show address
 
-Now that you have wrapped your app with the `ContractKitProvider`, you can easily connect to a wallet and show the address/network using the `useContractKit` hook. This will be done in `Wallet` compononet.
+Now that you have wrapped your app with the `ContractKitProvider`, you can easily connect to a wallet and show the address/network using the `useContractKit` hook. This will be done in `Wallet` component.
 
 You need to head over to `components/Wallet.tsx` and do the following simple steps:
 
@@ -77,6 +76,38 @@ export default function Wallet() {
 -  const kit = null;
 +  const { kit, address, network, destroy, connect } = useContractKit();
 
+  const [walletAddress, setWalletAddress] = useState("");
+
+  useEffect(() => {
+    if (address) {
+      setWalletAddress(address);
+    }
+
+    const fetchSummary = async () => {
+-      // Unimplemented
++      if (!address) return;
++
++      const [goldToken, cUSD, cEUR] = await Promise.all([
++        kit.contracts.getGoldToken(),
++        kit.contracts.getStableToken(StableToken.cUSD),
++        kit.contracts.getStableToken(StableToken.cEUR),
++      ]);
++
++      const [celo, cusd, ceur] = await Promise.all([
++        goldToken.balanceOf(address),
++        cUSD.balanceOf(address),
++        cEUR.balanceOf(address),
++      ]);
++
++      setBalanceSummary({
++        celo,
++        cusd,
++        ceur,
++      });
+    };
+
+    fetchSummary();
+  }, [kit, address]);
   return (
     <div className="container">
       {address ? (
@@ -105,19 +136,30 @@ You'll get to try it soon, but first, you need to have a Celo compatible wallet!
 
 ### 3. Fund your Metamask wallet with Celo so you can interact with the Auction House properly
 
-- Make sure you have Metamask installed and unlocked. Copy your wallet address in your clipboard
+- Make sure you have Metamask installed and unlocked. Copy your wallet address in your clipboard.
 
 - Add funds to it using the faucet https://celo.org/developers/faucet
 
-### 4. Expose balance of different coins in the wallet
+### 4. Connect your wallet to the app
 
-When clicking the connect button, `use-contractkit` should ask the user if they want to add the alfajores network as well as the different tokens (CELO, cUSD, cEUR, ...) to their wallet.
+It's time to try out the `Connect wallet` button to see if your address and funds shows up!
+
+- Check your terminal to make sure the app is running (run `yarn dev` again if it's not)
+- Open the app in the browser (default address is http://localhost:3000)
+- Click the `Connect wallet` button
+- A modal should appear with the wallet options:
+  - Choose Metamask
+- Check that your address and your balance show up on the screen!
+
+### 5. See the balance of different coins in your Metamask Wallet
+
+When clicking the connect button, `use-contractkit` should ask the user if they want to add the Alfajores network as well as the different tokens (CELO, cUSD, cEUR, ...) to their wallet.
 
 _However, as with all software... here is a backup plan:_
 
 You can follow the guide here https://docs.celo.org/getting-started/wallets/using-metamask-with-celo/manual-setup#adding-a-celo-network-to-metamask to add manually the network and the tokens to Metamask.
 
-```
+```text
 Network Name: Celo (Alfajores Testnet)
 New RPC URL: https://alfajores-forno.celo-testnet.org
 Chain ID: 44787
@@ -125,11 +167,7 @@ Currency Symbol (Optional): CELO
 Block Explorer URL (Optional): https://alfajores-blockscout.celo-testnet.org
 ```
 
-### 5. Test your connect logic
-
-- Try out the connect button to see if your address and funds shows up!
-
-### 6. Get list of auctions
+### 6. Get the list of auctions
 
 There are 2 contracts you'll need to interact with, the Auction Factory and the individual Auction one.
 To get the list of current auctions, you'll need the Auction Factory.
@@ -137,8 +175,8 @@ To get the list of current auctions, you'll need the Auction Factory.
 Steps:
 
 - Initialize the Auction Factory contract
-- Use the allAuctions() method to get the existing auctions
-- Check if there is a wallet connected by using kit
+- Use the `allAuctions()` method to get the existing auctions
+- Check if there is a wallet connected by using Kit
 
 ```diff
 [...]
@@ -220,7 +258,7 @@ const AuctionGrid: React.FC = () => {
 export default AuctionGrid;
 ```
 
-### 7. Allow user to create auction
+### 7. Allow users to create an auction
 
 To get create a new auction, you'll need the Auction Factory contract. Fortunately, we already did this in step 6.
 So we'll just forward it, via the `props` to our new component `CreateAuction.tsx`.
@@ -274,7 +312,7 @@ export default CreateAuctionModal;
 
 ```
 
-### 9. Show information of each auction
+### 8. Show information about each auction
 
 While we've done some of the heavy lifting, it's good to know how to gather data from a contract. This isn't strictly speaking related to `use-contractkit`, but this is useful knowledge nonetheless.
 
@@ -304,13 +342,13 @@ For instance, check the `components/Auction/AuctionCard.tsx` and implement `getA
   }, [auctionContract]);
 ```
 
-### 8. Allow user to bid on auction
+### 9. Allow users to bid on auction
 
 Now, this whole auction house would be a bit useless if you couldn't bid on the auctioned items... So let's do this, shall we?
 
 The file in question is located at `components/Auction/AuctionCardInfo/BidButton.tsx`
 
-- As before you'll need the `Auction` contract, fortunately, we already provide it in the props
+- As before you'll need the `Auction` contract, fortunately, we have already provided it in the props
 - Then use the `useContractKit` hook to be able to perform actions, such as signing a transaction.
 - Use the `performActions` methods to wrap the contract's method `bidIncrement`
 
@@ -361,8 +399,8 @@ const BidButton = ({
 export default BidButton;
 ```
 
-### 9. Build more!
+### 10. Build more!
 
-Now the workshop has convered most bases, but there's still so much to learn! Head to https://docs.celo.org/developer-resources/use-contractkit to learn more. Including managing the available networks to the wallet, adjusting the feeCurrency to use cEUR or cUSD, and more!
+Now the workshop has covered most bases, but there's still so much to learn! Head to https://docs.celo.org/developer-resources/use-contractkit to learn more. Including managing the available networks to the wallet, adjusting the feeCurrency to use cEUR or cUSD, and more!
 
-If you are interested by the auction house contract, you can have a sneakpeek in the `contracts` folder. :)
+If you are interested in the auction house contract, you can have a sneakpeek in the `contracts` folder. :)
