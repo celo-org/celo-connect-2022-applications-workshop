@@ -25,7 +25,7 @@ const AuctionGrid: React.FC = () => {
 
   useEffect(() => {
     const fetchAuctions = async () => {
-
+      // TODO: Add logic to fetch auctions
     };
 
     setStatus("loading");
@@ -34,8 +34,6 @@ const AuctionGrid: React.FC = () => {
       .catch(() => setStatus("error"));
   }, [kit, auctionFactoryContract, refresh]);
 
-  // In the empty version of the app, we could show this
-  // const isAccountConnected = false;
   const isAccountConnected = false;
 
   if (!isAccountConnected) {
