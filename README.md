@@ -50,11 +50,12 @@ import { Alfajores, ContractKitProvider } from "@celo-tools/use-contractkit";
   }}
   network={Alfajores}
 >
-// Existing AppRoot code
+  // Existing AppRoot code
 </ContractKitProvider>
 ```
 
 ---
+
 <details>
 <summary>See expected diff from changes</summary>
 
@@ -133,6 +134,7 @@ setBalanceSummary({
 ```
 
 ---
+
 <details>
 
 <summary>See expected diff from changes</summary>
@@ -236,6 +238,7 @@ To retrieve the list of existing auctions, you'll need to use the Auction Factor
 For that, follow the steps:
 
 - Initialize the Auction Factory contract:
+
   - Replace `const kit` with the `useContractKit` hook
 
     ```js
@@ -252,7 +255,9 @@ For that, follow the steps:
     ```
 
     > Note 1: We suggest using `useMemo` because (1) `auctionFactoryContract` is used in the `useEffect` dependency array of a child component and (2) we are refetching the list every 5 seconds.
-    ---
+
+    ***
+
     > Note 2: To make this and the next step easier, we've already imported the Contract ABI (`AuctionFactoryABI`) and its typings (`AuctionFactory`), which includes the methods that the contract has.
 
 - Once the contract has been initialised, you can use its `allAuctions()` method to get the existing auctions
@@ -275,6 +280,7 @@ const isAccountConnected = kit && kit.defaultAccount;
 ```
 
 ---
+
 <details>
 
 <summary>See expected diff from changes</summary>
@@ -336,6 +342,7 @@ const AuctionGrid: React.FC = () => {
 
 export default AuctionGrid;
 ```
+
 </details>
 
 ---
