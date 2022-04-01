@@ -18,12 +18,10 @@ export default function Wallet() {
   const kit = null;
   const [balanceSummary, setBalanceSummary] = useState(DEFAULT_BALANCE_SUMMARY);
   // Small workaround for next.js to not complain about a missing div from server rendering.
-  const [walletAddress, setWalletAddress] = useState("");
+  const [walletAddress, setWalletAddress] = useState<string | null>("");
 
   useEffect(() => {
-    if (address) {
-      setWalletAddress(address);
-    }
+    setWalletAddress(address);
 
     const fetchSummary = async () => {
       if (!address) return;
